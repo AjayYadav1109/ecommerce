@@ -8,23 +8,100 @@ import CorrectSvg from "@/assets/ColorSvg/Correct";
 import DecrementSvg from "@/assets/DecrementSvg";
 import IncrementSvg from "@/assets/IncrementSvg";
 import ArrowBoldSvg from "@/assets/ArrowBoldSvg";
-import { useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import nookies from "nookies";
 
 const ProductsDetails = () => {
-  const [count, setCount] = useState(1);
+  const {
+    state: { singleProduct, cart, allCart },
+    handleDataState,
+  } = withData();
+  const { token } = nookies.get({});
+  const router = useRouter();
+  const { id } = router.query;
+
+  useEffect(() => {
+    getProductsById(id);
+  }, [id]);
+
+  const getProductsById = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/product/product?productId=${id}`,
+      { method: "GET" }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("singleProduct", responseData?.product);
+    }
+  };
+
+  const cartHandler = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/cart/carts?productId=${id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("cart", responseData.cartItem);
+    }
+  };
+
+  const cartfilter = allCart.filter(
+    (cart) => cart?.productId?._id === singleProduct?._id
+  );
+
+  const incrementHandler = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/cart/carts?productId=${id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("cart", responseData.cartItem);
+    }
+  };
+
+  const decrementHandler = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/cart/carts?itemId=${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("cart", responseData.cartItem);
+    }
+  };
+
   return (
     <Container>
       <Wrapper>
         <Margin />
         <HeadTag>
-          <div>Home</div>
+          <Head onClick={() => router.push("/")}>Home</Head>
           <ArrowSvg />
-          <div>Shop</div>
+          <Head>Shop</Head>
           <ArrowSvg />
-          <div>Men</div>
+          <Head>Men</Head>
           <ArrowSvg />
-          <div>T-shirts</div>
+          <Head>T-shirts</Head>
         </HeadTag>
         <ImageContentWrapper>
           <ImgWrap>
@@ -39,25 +116,24 @@ const ProductsDetails = () => {
                 <img src="/image6.png" alt="image-6" />
               </div>
             </SmallImg>
-            <div>
-              <img src="/image1.png" alt="image-1" />
-            </div>
+            <Img src={singleProduct?.product_img} alt="image-1" />
           </ImgWrap>
           <Content>
-            <Title>ONE LIFE GRAPHIC TSHIRT</Title>
+            <Title>{singleProduct?.product_name}</Title>
             <StarRating>
               <StarSvgs>
-                {[...Array(4)].map((_, i) => (
-                  <StarSvg key={i} />
-                ))}
+                {singleProduct?.rating &&
+                  [...Array(Number(singleProduct?.rating))].map((_, i) => (
+                    <StarSvg key={i} />
+                  ))}
               </StarSvgs>
-              <Rating>4/5</Rating>
+              <Rating>{singleProduct?.rating}/5</Rating>
             </StarRating>
             <Rate>
-              <Price>$260</Price>
-              <Discount>$300</Discount>
+              <Price>₹{singleProduct?.price}</Price>
+              <Discount>₹{singleProduct?.discount}</Discount>
               <Offer>
-                <DisPer>-40%</DisPer>
+                <DisPer>-{singleProduct?.offer}%</DisPer>
               </Offer>
             </Rate>
             <Description>
@@ -101,18 +177,27 @@ const ProductsDetails = () => {
             </SizeContainer>
             <Margin />
             <CartButton>
-              <CartSize>
-                <Increment onClick={() => setCount(count - 1)}>
-                  <IncrementSvg />
-                </Increment>
-                <Count>{count}</Count>
-                <Decrement onClick={() => setCount(count + 1)}>
-                  <DecrementSvg />
-                </Decrement>
-              </CartSize>
-              <AddCart onClick={() => setCount(count + 1)}>
-                <Cart>Add to Cart</Cart>
-              </AddCart>
+              {!cartfilter?.quantity ? (
+                <AddCart onClick={() => cartHandler(id)}>
+                  <Cart>Add to Cart</Cart>
+                </AddCart>
+              ) : (
+                <CartSize>
+                  <Increment
+                    onClick={
+                      cartfilter?.quantity > 1
+                        ? () => decrementHandler(cart._id)
+                        : null
+                    }
+                  >
+                    <IncrementSvg />
+                  </Increment>
+                  <Count>{cartfilter?.quantity}</Count>
+                  <Decrement onClick={() => incrementHandler(id)}>
+                    <DecrementSvg />
+                  </Decrement>
+                </CartSize>
+              )}
               <Link href="/cartview">
                 <CheckBtn>
                   <CheckOut>Cart</CheckOut>
@@ -143,6 +228,12 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
+const Img = styled.img`
+  border-radius: 20px;
+  width: 450px;
+  height: 540px;
+`;
+
 const Margin = styled.div`
   background: rgba(0, 0, 0, 0.1);
   height: 1px;
@@ -152,10 +243,14 @@ const HeadTag = styled.div`
   margin: 24px 0 0 0;
   display: flex;
   align-items: center;
+  gap: 4px;
+`;
+
+const Head = styled.div`
+  cursor: pointer;
   font-family: "Satoshi";
   font-size: 16px;
   font-weight: 400;
-  gap: 4px;
 `;
 
 const Count = styled.div`
@@ -360,6 +455,7 @@ const AddCart = styled.div`
   border-radius: 62px;
   background: #000;
   display: flex;
+  gap: 20px;
   width: 400px;
   padding: 16px 54px;
   justify-content: center;

@@ -26,9 +26,7 @@ const Footer = () => {
                 value={inputBox}
               />
             </InputParent>
-            <div>
-              <SubButton>Subscribe to Newsletter</SubButton>
-            </div>
+            <SubButton>Subscribe to Newsletter</SubButton>
           </InputSib>
         </Wrap>
       </InputWrap>

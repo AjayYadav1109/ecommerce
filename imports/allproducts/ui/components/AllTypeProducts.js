@@ -12,12 +12,13 @@ import YellowSvg from "@/assets/ColorSvg/YellowSvg";
 import FilterSvg from "@/assets/FilterSvg";
 import UpperArrowSvg from "@/assets/UpperArrowSvg";
 import CorrectSvg from "@/assets/ColorSvg/Correct";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import DropdownSvg from "@/assets/DropdownSvg";
 import StarSvg from "@/assets/StarSvg";
 import { useRouter } from "next/router";
 import ReactSlider from "react-slider";
-import { useState } from "react";
+import { useEffect } from "react";
+import { withData } from "./api/context/data.context";
 
 const MultipleProductsOne = [
   {
@@ -55,7 +56,7 @@ const MultipleProductsTwo = [
   {
     title: "Skinny Fit Jeans",
     id: 2,
-    rating: "3.5/5",
+    rating: "3/5",
     rate: "$240",
     discount: "$260",
     offer: "-20%",
@@ -66,7 +67,7 @@ const MultipleProductsTwo = [
   {
     title: "Checkered Shirt",
     id: 3,
-    rating: "4.5/5",
+    rating: "4/5",
     rate: "$180",
     star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
     src: "/image9.png",
@@ -75,7 +76,7 @@ const MultipleProductsTwo = [
   {
     title: "Sleeve Striped T-shirt",
     id: 4,
-    rating: "4.5/5",
+    rating: "4/5",
     rate: "$130",
     discount: "$160",
     offer: "-30%",
@@ -119,7 +120,11 @@ const MultipleProductsThree = [
 
 const AllTypeProducts = () => {
   const router = useRouter();
-
+  const { id } = router.query;
+  const {
+    state: { product, subcategory, selectedCategoryId, selectedSubcategory },
+    handleDataState,
+  } = withData();
   // const [toggle, setToggle] = useState({
   //   first: false,
   //   second: false,
@@ -127,12 +132,51 @@ const AllTypeProducts = () => {
   // });
 
   // const toggleHandler = (i) => {
-  //   console.log(i);
   //   setToggle(!toggle);
   // };
 
+  useEffect(() => {
+    getProducts(id);
+  }, [id]);
+
+  useEffect(() => {
+    getSubcategory(selectedCategoryId);
+  }, [selectedCategoryId]);
+
+  const getProducts = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/product/products?subcategoryId=${id}`,
+      { method: "GET" }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState(
+        "selectedCategoryId",
+        responseData?.subcategories?.categoryId
+      );
+      handleDataState("selectedSubcategory", responseData.subcategories);
+      handleDataState("product", responseData.subcategories.products);
+    }
+  };
+
+  const getSubcategory = async (selectedCategoryId) => {
+    const response = await fetch(
+      `http://localhost:8080/api/subcategory/subcategories?categoryId=${selectedCategoryId}`,
+      { method: "GET" }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("subcategory", responseData.category.subcategories);
+    }
+  };
+
   const HandleProduct = (id) => {
     router.push(`/products/${id}`);
+  };
+
+  const filterHandler = (id) => {
+    router.push(`/product-collection/${id}`);
+    getProducts(id);
   };
 
   return (
@@ -140,38 +184,26 @@ const AllTypeProducts = () => {
       <Wrapper>
         <Margin />
         <TopHead>
-          <Home>Home</Home>
+          <Home onClick={() => router.push("/")}>Home</Home>
           <ArrowSvg />
-          <Casual>Casual</Casual>
+          <Casual>{selectedSubcategory?.subcategory_name}</Casual>
         </TopHead>
         <ProductContent>
           <Filters>
             <FilterRow>
               <FilterName>Filters</FilterName>
-              <FilterSvg />
             </FilterRow>
             <Margin />
             <Varities>
-              <Varity>
-                <VarityName>T-shirts</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Shorts</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Shirts</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Hoodie</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Jeans</VarityName>
-                <ArrowSvg />
-              </Varity>
+              {subcategory.map((sub) => (
+                <VarGroup
+                  onClick={() => filterHandler(sub._id)}
+                  key={sub._id}
+                  active={sub?._id === selectedSubcategory?._id}
+                >
+                  <VarityName>{sub.subcategory_name}</VarityName>
+                </VarGroup>
+              ))}
             </Varities>
             <Margin />
             <PriceSvg>
@@ -272,35 +304,13 @@ const AllTypeProducts = () => {
               </BtnBack>
             </ButtonList>
             <Margin />
-            <PriceContent>
-              <Price>Dress Style</Price>
-              <UpperArrowSvg />
-            </PriceContent>
-            <VaritiesExtra>
-              <Varity>
-                <VarityName>Casual</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Formal</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Party</VarityName>
-                <ArrowSvg />
-              </Varity>
-              <Varity>
-                <VarityName>Gym</VarityName>
-                <ArrowSvg />
-              </Varity>
-            </VaritiesExtra>
             <ApplyBack>
               <ApplyBtn>Apply Filter</ApplyBtn>
             </ApplyBack>
           </Filters>
           <ProductsList>
             <MainHeadline>
-              <Cas>Casual</Cas>
+              <Cas>{selectedSubcategory?.subcategory_name}</Cas>
               <MultiHead>
                 <ShowProduct>Showing 1-10 of 100 Products</ShowProduct>
                 <Sort>Sort by:</Sort>
@@ -310,21 +320,24 @@ const AllTypeProducts = () => {
             </MainHeadline>
             <MultipleRow>
               <SellingProduct>
-                {MultipleProductsOne.map((items) => (
+                {product.map((items) => (
                   <MainDiv
-                    onClick={() => HandleProduct(items.id)}
-                    key={items.title}
+                    onClick={() => HandleProduct(items._id)}
+                    key={items._id}
                   >
-                    <MainImg src={items.src} alt={items.alt} />
-                    <Title>{items.title}</Title>
+                    <MainImg src={items.product_img} alt="product" />
+                    <Title>{items.product_name}</Title>
                     <StarRating>
-                      <div>{items.star}</div>
-                      <Rating>{items.rating}</Rating>
+                      {items.rating &&
+                        [...Array(Number(items.rating))].map((_, i) => (
+                          <StarSvg key={i} />
+                        ))}
+                      <Rating>{items.rating}/5</Rating>
                     </StarRating>
                     <DisRate>
-                      <Rate>{items.rate}</Rate>
+                      <Rate>₹{items.price}</Rate>
                       <Discount>{items.discount}</Discount>
-                      {items.offer ? <DisPer>{items.offer}</DisPer> : ""}
+                      {items.offer ? <DisPer>-{items.offer}%</DisPer> : ""}
                     </DisRate>
                   </MainDiv>
                 ))}
@@ -404,6 +417,22 @@ const SliderWrap = styled.div`
     border: 5px solid black;
     border-radius: 8px;
   }
+`;
+
+const VarGroup = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 20px;
+
+  ${({ active }) =>
+    active &&
+    css`
+      background-color: #f0f0f0;
+      padding: 5px;
+      border-radius: 10px;
+    `}
 `;
 
 const Container = styled.div`
@@ -500,6 +529,7 @@ const Varities = styled.div`
 
 const Varity = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
 `;
@@ -729,7 +759,7 @@ const DisPer = styled.div`
   border-radius: 62px;
   background: rgba(255, 51, 51, 0.1);
   width: 58px;
-  padding: 6px 14px;
+  padding: 7px 14px;
   color: #f33;
   font-family: "Satoshi";
   font-size: 12px;
@@ -749,6 +779,8 @@ const MainDiv = styled.div`
 
 const MainImg = styled.img`
   border-radius: 20px;
+  width: 250px;
+  height: 250px;
 `;
 
 const MultipleRow = styled.div`

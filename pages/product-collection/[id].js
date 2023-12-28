@@ -1,7 +1,6 @@
 import ProductInfo from "@/imports/allproducts/ui/components/pages/ProductInfo";
-import React from "react";
 
-const products = () => {
+const productCollection = () => {
   return (
     <>
       <ProductInfo />
@@ -9,4 +8,4 @@ const products = () => {
   );
 };
 
-export default products;
+export default productCollection;

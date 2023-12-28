@@ -5,110 +5,209 @@ import DecrementSvg from "@/assets/DecrementSvg";
 import IncrementSvg from "@/assets/IncrementSvg";
 import FrameSvg from "@/assets/FrameSvg";
 import ArrowBoldSvg from "@/assets/ArrowBoldSvg";
-
-const MainCartProduct = [
-  {
-    src: "/image20.png",
-    alt: "image-20",
-    title: "Gradient Graphic T-shirt",
-    size: "Large",
-    color: "White",
-    price: "$145",
-  },
-  {
-    src: "/image9.png",
-    alt: "image-3",
-    title: "Checkered Shirt",
-    size: "Medium",
-    color: "Red",
-    price: "$180",
-  },
-  {
-    src: "/image8.png",
-    alt: "image-2",
-    title: "Skinny Fit Jeans",
-    size: "Large",
-    color: "Blue",
-    price: "$240",
-  },
-];
+import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { useRouter } from "next/router";
+import StarSvg from "@/assets/StarSvg";
+import nookies from "nookies";
+import { useEffect } from "react";
 
 const CartProduct = () => {
+  const router = useRouter();
+  const {
+    state: { allCart },
+    handleDataState,
+  } = withData();
+  const { token } = nookies.get({});
+
+  useEffect(() => {
+    getCart(token);
+  }, []);
+
+  const getCart = async (token) => {
+    const response = await fetch("http://localhost:8080/api/cart/carts", {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("allCart", responseData.cartItems);
+    }
+  };
+
+  const incrementHandler = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/cart/carts?productId=${id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("cart", responseData.cartItem);
+      getCart(token);
+    }
+  };
+
+  const decrementHandler = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/cart/carts?itemId=${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("cart", responseData.cartItem);
+      getCart(token);
+    }
+  };
+
+  const removeHandler = async (id) => {
+    const response = await fetch(
+      `http://localhost:8080/api/cart/carts?itemId=${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      getCart(token);
+    }
+  };
+
+  const subtotal = allCart.reduce((acc, item) => {
+    return acc + item.productId.price * item.quantity;
+  }, 0);
+
+  const discount = subtotal * 0.2;
+
+  const deliveryFee = 15;
+  const total = subtotal - discount + deliveryFee;
   return (
     <Container>
       <Wrapper>
-        <Margin />
         <TopHead>
-          <Home>Home</Home>
+          <Home onClick={() => router.push("/")}>Home</Home>
           <ArrowSvg />
           <Cart>Cart</Cart>
         </TopHead>
         <YourCart>YOUR CART</YourCart>
-        <MainCart>
-          <ProductCart>
-            {MainCartProduct.map((items) => (
-              <MainDetail>
-                <CartDetail key={items.price}>
-                  <Img src={items.src} alt={items.alt} />
-                  <Count>
-                    <Delete>
-                      <Title>{items.title}</Title>
-                      <Del>
-                        <DeleteSvg />
-                      </Del>
-                    </Delete>
-                    <Size>Size: {items.size}</Size>
-                    <Color>Color: {items.color}</Color>
-                    <PriceSvg>
-                      <Price>{items.price}</Price>
-                      <Btn>
-                        <DecrementSvg />
-                        <One>1</One>
-                        <IncrementSvg />
-                      </Btn>
-                    </PriceSvg>
-                  </Count>
-                </CartDetail>
+        {allCart.length === 0 ? (
+          <EmptyBag>
+            <Gif
+              src="https://cdn.dribbble.com/users/2022451/screenshots/5557745/empty_bag.gif"
+              alt="empty-cart"
+            />
+            <EmptyCart>Hey, it feels so light!</EmptyCart>
+            <Empty>There is nothing in your bag. Let's add some items.</Empty>
+            <BackBtn
+              onClick={() =>
+                router.push("product-collection/65785509e29e11e1cdcc3077")
+              }
+            >
+              ADD ITEMS FROM PRODUCT LIST
+            </BackBtn>
+          </EmptyBag>
+        ) : (
+          <MainCart>
+            <ProductCart>
+              {allCart.map((items) => (
+                <MainDetail key={items._id}>
+                  <CartDetail key={items.price}>
+                    <Img
+                      src={items.productId.product_img}
+                      alt="product-image"
+                    />
+                    <Count>
+                      <Delete>
+                        <Title>{items.productId.product_name}</Title>
+                        <Del onClick={() => removeHandler(items._id)}>
+                          <DeleteSvg />
+                        </Del>
+                      </Delete>
+                      <Size>
+                        {[...Array(Number(items.productId.rating))].map(
+                          (_, i) => (
+                            <StarSvg key={i} />
+                          )
+                        )}
+                      </Size>
+                      <PriceSvg>
+                        <Price>₹{items.productId.price}</Price>
+                        <Btn>
+                          <Decrement
+                            onClick={() =>
+                              incrementHandler(items.productId._id)
+                            }
+                          >
+                            <DecrementSvg />
+                          </Decrement>
+                          <One>{items.quantity}</One>
+                          <Increment
+                            onClick={
+                              items.quantity > 1
+                                ? () => decrementHandler(items._id)
+                                : null
+                            }
+                          >
+                            <IncrementSvg />
+                          </Increment>
+                        </Btn>
+                      </PriceSvg>
+                    </Count>
+                  </CartDetail>
+                  <Margin />
+                </MainDetail>
+              ))}
+            </ProductCart>
+            <Order>
+              <Summary>Order Summary</Summary>
+              <MainTotal>
+                <TotalContent>
+                  <Total>Subtotal</Total>
+                  <SubTotal>₹{subtotal}</SubTotal>
+                </TotalContent>
+                <TotalContent>
+                  <Total>Discount (-20%)</Total>
+                  <Discount>-₹{discount}</Discount>
+                </TotalContent>
+                <TotalContent>
+                  <Total>Delivery Fee</Total>
+                  <SubTotal>₹{deliveryFee}</SubTotal>
+                </TotalContent>
                 <Margin />
-              </MainDetail>
-            ))}
-          </ProductCart>
-          <Order>
-            <Summary>Order Summary</Summary>
-            <MainTotal>
-              <TotalContent>
-                <Total>Subtotal</Total>
-                <SubTotal>$565</SubTotal>
-              </TotalContent>
-              <TotalContent>
-                <Total>Discount (-20%)</Total>
-                <Discount>-$113</Discount>
-              </TotalContent>
-              <TotalContent>
-                <Total>Delivery Fee</Total>
-                <SubTotal>$15</SubTotal>
-              </TotalContent>
-              <Margin />
-              <TotalContent>
-                <Totals>Total</Totals>
-                <FinalTotal>$467</FinalTotal>
-              </TotalContent>
-            </MainTotal>
-            <BtnList>
-              <Frame>
-                <FrameSvg />
-                <Promo>Add promo code</Promo>
-              </Frame>
-              <ApplyBack>
-                <ApplyBtn>Apply</ApplyBtn>
-              </ApplyBack>
-            </BtnList>
-            <CheckBtn>
-              <CheckOut>Go to Checkout</CheckOut>
-              <ArrowBoldSvg />
-            </CheckBtn>
-          </Order>
-        </MainCart>
+                <TotalContent>
+                  <Totals>Total</Totals>
+                  <FinalTotal>₹{total}</FinalTotal>
+                </TotalContent>
+              </MainTotal>
+              <BtnList>
+                <Frame>
+                  <FrameSvg />
+                  <Promo>Add promo code</Promo>
+                </Frame>
+                <ApplyBack>
+                  <ApplyBtn>Apply</ApplyBtn>
+                </ApplyBack>
+              </BtnList>
+              <CheckBtn>
+                <CheckOut>Go to Checkout</CheckOut>
+                <ArrowBoldSvg />
+              </CheckBtn>
+            </Order>
+          </MainCart>
+        )}
       </Wrapper>
     </Container>
   );
@@ -119,14 +218,54 @@ export default CartProduct;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   justify-content: center;
   align-items: center;
+  background-color: #fbfbfb;
+`;
+
+const Gif = styled.img`
+  width: 50%;
+`;
+
+const Increment = styled.div``;
+
+const Decrement = styled.div``;
+
+const Empty = styled.div`
+  font-size: 16px;
+  font-family: "Satoshi";
+  font-weight: 500;
+`;
+
+const EmptyBag = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+`;
+
+const EmptyCart = styled.div`
+  font-size: 20px;
+  font-family: "Satoshi";
+  font-weight: 700;
+`;
+
+const BackBtn = styled.button`
+  padding: 10px;
+  border: 1px solid #ff3f6c;
+  background-color: white;
+  cursor: pointer;
+  color: #ff3f6c;
+  font-size: 16px;
+  font-family: "Satoshi";
+  font-weight: 700;
 `;
 
 const Wrapper = styled.div`
   max-width: 1240px;
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 `;
@@ -188,10 +327,17 @@ const ProductCart = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   width: 715px;
+  height: 75%;
+  overflow: auto;
   padding: 20px 24px;
   flex-direction: column;
   gap: 24px;
   margin-bottom: 170px;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
 `;
 
 const Order = styled.div`

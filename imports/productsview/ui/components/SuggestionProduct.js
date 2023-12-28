@@ -6,18 +6,18 @@ const Suggestion = [
   {
     title: "Polo with Contrast Trims",
     rating: "4/5",
-    rate: "$212",
+    rate: "₹212",
     star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
     src: "/image19.png",
     alt: "image-19",
-    discount: "$242",
+    discount: "₹242",
     offer: "-20%",
     id: 9,
   },
   {
     title: "Gradient Graphic T-shirt",
     rating: "3/5",
-    rate: "$145",
+    rate: "₹145",
     star: [...Array(3)].map((_, i) => <StarSvg key={i} />),
     src: "/image20.png",
     alt: "image-20",
@@ -26,7 +26,7 @@ const Suggestion = [
   {
     title: "Polo with Tipping Details",
     rating: "4/5",
-    rate: "$180",
+    rate: "₹180",
     star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
     src: "/image21.png",
     alt: "image-21",
@@ -35,11 +35,11 @@ const Suggestion = [
   {
     title: "Black Striped T-shirt",
     rating: "5/5",
-    rate: "$120",
+    rate: "₹120",
     star: [...Array(5)].map((_, i) => <StarSvg key={i} />),
     src: "/image22.png",
     alt: "image-22",
-    discount: "$150",
+    discount: "₹150",
     offer: "-30%",
     id: 12,
   },
@@ -104,7 +104,6 @@ const LikePara = styled.div`
 
 const ProductSuggest = styled.div`
   display: flex;
-  flex-wrap: wrap;
   gap: 21px;
 `;
 

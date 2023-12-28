@@ -1,56 +1,176 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
 import DropdownSvg from "@/assets/DropdownSvg";
 import Profile from "@/assets/Profile";
 import Cart from "@/assets/Cart";
+import LoginModal from "./LoginModal";
+import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { useRouter } from "next/router";
+import nookies, { destroyCookie } from "nookies";
 
 const Header = () => {
   const [search, setSearch] = useState("");
-
+  const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSubcategory, setShowSubcategory] = useState(false);
+  const {
+    state: { allCategory, subcategory, allCart },
+    handleDataState,
+  } = withData();
+  const router = useRouter();
+  const { token } = nookies.get({});
   const searchHandler = (e) => {
     setSearch(e.target.value);
   };
+
+  const logoutHandler = () => {
+    destroyCookie({}, "token", { path: "/" });
+    router.push("/");
+  };
+
+  useEffect(() => {
+    getCategory();
+    getCart(token);
+  }, []);
+
+  useEffect(() => {
+    getCart(token);
+  }, [token]);
+
+  const getCategory = async () => {
+    const response = await fetch(
+      "http://localhost:8080/api/category/categories",
+      { method: "GET" }
+    );
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("allCategory", responseData.category);
+    }
+  };
+
+  const getSubcategory = async (id) => {
+    if (subcategory[0]?.categoryId !== id) {
+      const response = await fetch(
+        `http://localhost:8080/api/subcategory/subcategories?categoryId=${id}`,
+        { method: "GET" }
+      );
+      if (response.ok) {
+        const responseData = await response.json();
+        handleDataState("subcategory", responseData.category.subcategories);
+        setShowSubcategory(true);
+      }
+    } else {
+      setShowSubcategory(true);
+    }
+  };
+
+  const getCart = async (token) => {
+    const response = await fetch("http://localhost:8080/api/cart/carts", {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+      handleDataState("allCart", responseData.cartItems);
+    }
+  };
+
+  const quantity = allCart.reduce((acc, item) => {
+    return acc + item.quantity;
+  }, 0);
+
+  const productHandler = (id) => {
+    router.push(`/product-collection/${id}`);
+  };
+
   return (
-    <Container>
-      <Wrapper>
-        <Logo>SHOP.CO</Logo>
-        <Icon>
-          <Shop>
-            <p>Shop</p>
-            <DropdownSvg />
-          </Shop>
-          <Sale>On Sale</Sale>
-          <Arrival>New Arrivals</Arrival>
-          <Brand>Brands</Brand>
-        </Icon>
-        <Search>
-          <WrapSearch>
-            <Svg>
-              <SearchSvg />
-            </Svg>
-            <Input
-              type="text"
-              placeholder="Search for products..."
-              onChange={searchHandler}
-              value={search}
-            />
-          </WrapSearch>
-        </Search>
-        <Carts>
-          <CartSvg>
-            <Cart />
-          </CartSvg>
-          <ProfileSvg>
-            <Profile />
-          </ProfileSvg>
-        </Carts>
-      </Wrapper>
-    </Container>
+    <>
+      <Container>
+        <Wrapper>
+          <Logo>SHOP.CO</Logo>
+          {allCategory.map((category) => (
+            <Icon
+              onMouseEnter={() => getSubcategory(category._id)}
+              key={category._id}
+            >
+              <Shop>{category.category_name}</Shop>
+            </Icon>
+          ))}
+          {/* <Shop>
+              <p>Shop</p>
+              <DropdownSvg />
+            </Shop>
+            <Sale>On Sale</Sale>
+            <Arrival>New Arrivals</Arrival>
+            <Brand>Brands</Brand> */}
+          <Search>
+            <WrapSearch>
+              <Svg>
+                <SearchSvg />
+              </Svg>
+              <Input
+                type="text"
+                placeholder="Search for products..."
+                onChange={searchHandler}
+                value={search}
+              />
+            </WrapSearch>
+          </Search>
+          <Carts>
+            <CartSvg onClick={() => router.push("cartview")}>
+              <Cart />
+              {token && <Quantity>{quantity}</Quantity>}
+            </CartSvg>
+            {!token ? (
+              <ProfileSvg onClick={() => setShowModal(true)}>
+                <Profile />
+              </ProfileSvg>
+            ) : (
+              <LargeSize onClick={logoutHandler}>
+                <Large>Logout</Large>
+              </LargeSize>
+            )}
+          </Carts>
+        </Wrapper>
+      </Container>
+      {showModal && <LoginModal setShowModal={setShowModal} />}
+      {showSubcategory && (
+        <Dropdown onMouseLeave={() => setShowSubcategory(false)}>
+          {subcategory.map((sub) => (
+            <AllSub key={sub._id}>
+              <Sub onClick={() => productHandler(sub._id)}>
+                {sub.subcategory_name}
+              </Sub>
+            </AllSub>
+          ))}
+        </Dropdown>
+      )}
+    </>
   );
 };
 
 export default Header;
+
+// Header.getInitialProps = async () => {
+//   try {
+//     const response = await fetch(
+//       "http://localhost:8080/api/category/categories",
+//       { method: "GET" }
+//     );
+//     if (response.ok) {
+//       const responseData = await response.json();
+//       return { allCategory: responseData.category };
+//     } else {
+//       return { allCategory: null };
+//     }
+//   } catch (error) {
+//     console.error("Error fetching subcategories:", error);
+//     return { allCategory: null };
+//   }
+// };
 
 const Container = styled.div`
   width: 100%;
@@ -58,8 +178,66 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   display: flex;
+  position: relative;
+  z-index: 2;
 `;
 
+const Dropdown = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  justify-content: center;
+  position: absolute;
+  z-index: 2;
+`;
+
+const AllSub = styled.div`
+  background-color: white;
+  width: 45%;
+  padding: 5px;
+`;
+
+const Quantity = styled.div`
+  color: white;
+  background-color: green;
+  padding: 2px 4px;
+  top: -22px;
+  left: 5px;
+  position: absolute;
+`;
+
+const LargeSize = styled.div`
+  border-radius: 62px;
+  background: #000;
+  display: flex;
+  padding: 6px 12px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    background-color: #454545;
+  }
+`;
+
+const Large = styled.div`
+  color: #fff;
+  font-family: "Satoshi";
+  font-size: 16px;
+  font-weight: 500;
+`;
+
+const Sub = styled.div`
+  font-size: 12px;
+  font-family: "Satoshi";
+  font-weight: 500;
+  cursor: pointer;
+  &:hover {
+    font-family: "Satoshi";
+    font-weight: 700;
+  }
+`;
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -83,7 +261,7 @@ const Icon = styled.div`
   gap: 24px;
   align-items: center;
   font-family: "Satoshi";
-  font-weight: 400;
+  font-weight: 600;
 `;
 
 const Search = styled.div`
@@ -98,6 +276,7 @@ const Search = styled.div`
 const Carts = styled.div`
   color: #000;
   display: flex;
+  align-items: center;
   gap: 14px;
 `;
 
@@ -145,6 +324,7 @@ const Brand = styled.div`
 
 const CartSvg = styled.div`
   cursor: pointer;
+  position: relative;
 `;
 
 const ProfileSvg = styled.div`

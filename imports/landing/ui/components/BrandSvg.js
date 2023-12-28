@@ -10,21 +10,21 @@ const BrandSvg = () => {
     <Container>
       <Wrapper>
         <SecondBox>
-          <div>
+          <>
             <VersaceSvg />
-          </div>
-          <div>
+          </>
+          <>
             <ZaraSvg />
-          </div>
-          <div>
+          </>
+          <>
             <GucciSvg />
-          </div>
-          <div>
+          </>
+          <>
             <PradaSvg />
-          </div>
-          <div>
+          </>
+          <>
             <CalvinSvg />
-          </div>
+          </>
         </SecondBox>
       </Wrapper>
     </Container>

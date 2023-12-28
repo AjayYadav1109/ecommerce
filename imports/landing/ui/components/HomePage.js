@@ -27,7 +27,7 @@ const HomePage = () => {
             </SmallPara>
           </Paras>
           <div>
-            <Link href="/products">
+            <Link href="product-collection/65785509e29e11e1cdcc3077">
               <ShopButton>Shop Now</ShopButton>
             </Link>
           </div>
