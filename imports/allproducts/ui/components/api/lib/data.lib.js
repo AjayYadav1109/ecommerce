@@ -5,24 +5,3 @@ export const updateState = (state, action) => {
   data[action.name] = action.payload;
   return data;
 };
-
-// export const addToCart = (state, action) => {
-//   return {
-//     ...state,
-//     selectedProduct: [...state.selectedProduct, action.payload],
-//   };
-// };
-
-// export const cartIncrement = (state) => {
-//   return {
-//     ...state,
-//     quantity: state.quantity + 1,
-//   };
-// };
-
-// export const cartDecrement = (state) => {
-//   return {
-//     ...state,
-//     quantity: state.quantity - 1,
-//   };
-// };

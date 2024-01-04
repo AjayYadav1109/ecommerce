@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useState } from "react";
+import styled, { css } from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
 import DropdownSvg from "@/assets/DropdownSvg";
 import Profile from "@/assets/Profile";
@@ -12,8 +12,7 @@ import nookies, { destroyCookie } from "nookies";
 const Header = () => {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSubcategory, setShowSubcategory] = useState(false);
+  // const [showSubcategory, setShowSubcategory] = useState(false);
   const {
     state: { allCategory, subcategory, allCart },
     handleDataState,
@@ -23,30 +22,9 @@ const Header = () => {
   const searchHandler = (e) => {
     setSearch(e.target.value);
   };
-
   const logoutHandler = () => {
     destroyCookie({}, "token", { path: "/" });
     router.push("/");
-  };
-
-  useEffect(() => {
-    getCategory();
-    getCart(token);
-  }, []);
-
-  useEffect(() => {
-    getCart(token);
-  }, [token]);
-
-  const getCategory = async () => {
-    const response = await fetch(
-      "http://localhost:8080/api/category/categories",
-      { method: "GET" }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("allCategory", responseData.category);
-    }
   };
 
   const getSubcategory = async (id) => {
@@ -58,32 +36,16 @@ const Header = () => {
       if (response.ok) {
         const responseData = await response.json();
         handleDataState("subcategory", responseData.category.subcategories);
-        setShowSubcategory(true);
       }
-    } else {
-      setShowSubcategory(true);
     }
   };
 
-  const getCart = async (token) => {
-    const response = await fetch("http://localhost:8080/api/cart/carts", {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("allCart", responseData.cartItems);
-    }
-  };
-
-  const quantity = allCart.reduce((acc, item) => {
+  const quantity = allCart?.reduce((acc, item) => {
     return acc + item.quantity;
   }, 0);
 
-  const productHandler = (id) => {
-    router.push(`/product-collection/${id}`);
+  const productHandler = (cid, sid) => {
+    router.push(`/product-collection/cid=${cid}&sid=${sid}`);
   };
 
   return (
@@ -91,12 +53,23 @@ const Header = () => {
       <Container>
         <Wrapper>
           <Logo>SHOP.CO</Logo>
-          {allCategory.map((category) => (
+          {allCategory?.map((category) => (
             <Icon
               onMouseEnter={() => getSubcategory(category._id)}
               key={category._id}
             >
               <Shop>{category.category_name}</Shop>
+              <Dropdown>
+                {subcategory.map((sub) => (
+                  <AllSub key={sub._id}>
+                    <Sub
+                      onClick={() => productHandler(sub.categoryId, sub._id)}
+                    >
+                      {sub.subcategory_name}
+                    </Sub>
+                  </AllSub>
+                ))}
+              </Dropdown>
             </Icon>
           ))}
           {/* <Shop>
@@ -137,40 +110,25 @@ const Header = () => {
         </Wrapper>
       </Container>
       {showModal && <LoginModal setShowModal={setShowModal} />}
-      {showSubcategory && (
-        <Dropdown onMouseLeave={() => setShowSubcategory(false)}>
-          {subcategory.map((sub) => (
-            <AllSub key={sub._id}>
-              <Sub onClick={() => productHandler(sub._id)}>
-                {sub.subcategory_name}
-              </Sub>
-            </AllSub>
-          ))}
-        </Dropdown>
-      )}
     </>
   );
 };
 
 export default Header;
 
-// Header.getInitialProps = async () => {
-//   try {
-//     const response = await fetch(
-//       "http://localhost:8080/api/category/categories",
-//       { method: "GET" }
-//     );
-//     if (response.ok) {
-//       const responseData = await response.json();
-//       return { allCategory: responseData.category };
-//     } else {
-//       return { allCategory: null };
-//     }
-//   } catch (error) {
-//     console.error("Error fetching subcategories:", error);
-//     return { allCategory: null };
-//   }
-// };
+const Dropdown = styled.div`
+  top: 96px;
+  height: 100px;
+  background-color: #fff;
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  justify-content: center;
+  position: absolute;
+  z-index: 2;
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -179,17 +137,6 @@ const Container = styled.div`
   justify-content: center;
   display: flex;
   position: relative;
-  z-index: 2;
-`;
-
-const Dropdown = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 auto;
-  justify-content: center;
-  position: absolute;
   z-index: 2;
 `;
 
@@ -260,8 +207,17 @@ const Icon = styled.div`
   display: flex;
   gap: 24px;
   align-items: center;
+  height: 96px;
   font-family: "Satoshi";
   font-weight: 600;
+
+  &:hover {
+    border-bottom: 4px solid #0db7af;
+
+    ${Dropdown} {
+      display: flex;
+    }
+  }
 `;
 
 const Search = styled.div`

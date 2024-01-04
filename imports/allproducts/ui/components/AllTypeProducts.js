@@ -120,9 +120,8 @@ const MultipleProductsThree = [
 
 const AllTypeProducts = () => {
   const router = useRouter();
-  const { id } = router.query;
   const {
-    state: { product, subcategory, selectedCategoryId, selectedSubcategory },
+    state: { product, subcategory, selectedSubcategory },
     handleDataState,
   } = withData();
   // const [toggle, setToggle] = useState({
@@ -135,48 +134,17 @@ const AllTypeProducts = () => {
   //   setToggle(!toggle);
   // };
 
-  useEffect(() => {
-    getProducts(id);
-  }, [id]);
-
-  useEffect(() => {
-    getSubcategory(selectedCategoryId);
-  }, [selectedCategoryId]);
-
-  const getProducts = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/product/products?subcategoryId=${id}`,
-      { method: "GET" }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState(
-        "selectedCategoryId",
-        responseData?.subcategories?.categoryId
-      );
-      handleDataState("selectedSubcategory", responseData.subcategories);
-      handleDataState("product", responseData.subcategories.products);
-    }
-  };
-
-  const getSubcategory = async (selectedCategoryId) => {
-    const response = await fetch(
-      `http://localhost:8080/api/subcategory/subcategories?categoryId=${selectedCategoryId}`,
-      { method: "GET" }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("subcategory", responseData.category.subcategories);
-    }
-  };
+  // useEffect(() => {
+  //   getProducts(id);
+  // }, [id]);
 
   const HandleProduct = (id) => {
     router.push(`/products/${id}`);
   };
 
-  const filterHandler = (id) => {
-    router.push(`/product-collection/${id}`);
-    getProducts(id);
+  const filterHandler = (cid, sid) => {
+    handleDataState("selectedSubcategory", sid);
+    router.push(`/product-collection/cid=${cid}&sid=${sid}`);
   };
 
   return (
@@ -197,9 +165,9 @@ const AllTypeProducts = () => {
             <Varities>
               {subcategory.map((sub) => (
                 <VarGroup
-                  onClick={() => filterHandler(sub._id)}
+                  onClick={() => filterHandler(sub.categoryId, sub._id)}
                   key={sub._id}
-                  active={sub?._id === selectedSubcategory?._id}
+                  active={sub._id === selectedSubcategory?._id}
                 >
                   <VarityName>{sub.subcategory_name}</VarityName>
                 </VarGroup>

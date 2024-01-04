@@ -1,8 +1,9 @@
 import Footer from "@/imports/landing/ui/components/Footer";
-// import Header from "@/imports/landing/ui/components/Header";
 import dynamic from "next/dynamic";
 import LandingPage from "@/imports/landing/ui/pages/Landing";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
+import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import nookies, { parseCookies } from "nookies";
 // const LandingPage = dynamic(
 //   () => import("@/imports/landing/ui/pages/Landing"),
 //   {
@@ -16,7 +17,18 @@ const Header = dynamic(() => import("@/imports/landing/ui/components/Header"), {
 //   ssr: false,
 // });
 
-const LandingHomePage = () => {
+const LandingHomePage = ({ categoryData, cartData }) => {
+  const { handleDataState } = withData();
+  const { token } = nookies.get({});
+
+  useEffect(() => {
+    handleDataState("allCategory", categoryData);
+  }, []);
+
+  useEffect(() => {
+    handleDataState("allCart", cartData);
+  }, [token]);
+
   return (
     <Fragment>
       <Header />
@@ -24,6 +36,34 @@ const LandingHomePage = () => {
       <Footer />
     </Fragment>
   );
+};
+
+LandingHomePage.getInitialProps = async (ctx) => {
+  const { token } = parseCookies(ctx);
+
+  const categoryResponse = fetch(
+    "http://localhost:8080/api/category/categories",
+    {
+      method: "GET",
+    }
+  ).then((res) => res.json());
+
+  const cartResponse = fetch("http://localhost:8080/api/cart/carts", {
+    method: "GET",
+    headers: { Authorization: token },
+  }).then((res) => res.json());
+
+  return Promise.all([categoryResponse, cartResponse])
+    .then(([categoryData, cartData]) => {
+      return {
+        categoryData: categoryData.category,
+        cartData: cartData.cartItems,
+      };
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      return { categoryData: null, cartData: null };
+    });
 };
 
 export default LandingHomePage;

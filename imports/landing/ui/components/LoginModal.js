@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { setCookie } from "nookies";
 import React, { useEffect, useRef, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
@@ -8,6 +9,7 @@ const LoginModal = ({ setShowModal }) => {
   const [showErrorMessage, setShowErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const modalRef = useRef(null);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -123,6 +125,7 @@ const LoginModal = ({ setShowModal }) => {
         setShowSuccessMessage("");
         setShowErrorMessage("");
         setShowModal(false);
+        router.push("/");
       }, 2000);
     }
   };

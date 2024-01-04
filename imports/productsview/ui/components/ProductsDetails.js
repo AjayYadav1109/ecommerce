@@ -5,10 +5,8 @@ import BrownSvg from "@/assets/ColorSvg/BrownSvg";
 import GreenSvg from "@/assets/ColorSvg/GreenSvg";
 import PurpleSvg from "@/assets/ColorSvg/PurpleSvg";
 import CorrectSvg from "@/assets/ColorSvg/Correct";
-import DecrementSvg from "@/assets/DecrementSvg";
-import IncrementSvg from "@/assets/IncrementSvg";
 import ArrowBoldSvg from "@/assets/ArrowBoldSvg";
-import { useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
@@ -16,29 +14,14 @@ import nookies from "nookies";
 
 const ProductsDetails = () => {
   const {
-    state: { singleProduct, cart, allCart },
-    handleDataState,
+    state: { singleProduct },
   } = withData();
   const { token } = nookies.get({});
   const router = useRouter();
   const { id } = router.query;
+  const [showCart, setShowCart] = useState(false);
 
-  useEffect(() => {
-    getProductsById(id);
-  }, [id]);
-
-  const getProductsById = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/product/product?productId=${id}`,
-      { method: "GET" }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("singleProduct", responseData?.product);
-    }
-  };
-
-  const cartHandler = async (id) => {
+  const cartHandler = (id) => async () => {
     const response = await fetch(
       `http://localhost:8080/api/cart/carts?productId=${id}`,
       {
@@ -50,44 +33,12 @@ const ProductsDetails = () => {
     );
     if (response.ok) {
       const responseData = await response.json();
-      handleDataState("cart", responseData.cartItem);
+      setShowCart(true);
     }
   };
 
-  const cartfilter = allCart.filter(
-    (cart) => cart?.productId?._id === singleProduct?._id
-  );
-
-  const incrementHandler = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/cart/carts?productId=${id}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("cart", responseData.cartItem);
-    }
-  };
-
-  const decrementHandler = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/cart/carts?itemId=${id}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("cart", responseData.cartItem);
-    }
+  const checkoutHandler = () => {
+    router.push("/cartview");
   };
 
   return (
@@ -177,33 +128,13 @@ const ProductsDetails = () => {
             </SizeContainer>
             <Margin />
             <CartButton>
-              {!cartfilter?.quantity ? (
-                <AddCart onClick={() => cartHandler(id)}>
-                  <Cart>Add to Cart</Cart>
+              {
+                <AddCart
+                  onClick={!showCart ? cartHandler(id) : checkoutHandler}
+                >
+                  <Cart>{!showCart ? "Add To Cart" : "Go To Cart"}</Cart>
                 </AddCart>
-              ) : (
-                <CartSize>
-                  <Increment
-                    onClick={
-                      cartfilter?.quantity > 1
-                        ? () => decrementHandler(cart._id)
-                        : null
-                    }
-                  >
-                    <IncrementSvg />
-                  </Increment>
-                  <Count>{cartfilter?.quantity}</Count>
-                  <Decrement onClick={() => incrementHandler(id)}>
-                    <DecrementSvg />
-                  </Decrement>
-                </CartSize>
-              )}
-              <Link href="/cartview">
-                <CheckBtn>
-                  <CheckOut>Cart</CheckOut>
-                  <ArrowBoldSvg />
-                </CheckBtn>
-              </Link>
+              }
             </CartButton>
           </Content>
         </ImageContentWrapper>
@@ -251,13 +182,6 @@ const Head = styled.div`
   font-family: "Satoshi";
   font-size: 16px;
   font-weight: 400;
-`;
-
-const Count = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 500;
 `;
 
 const ImageContentWrapper = styled.div`
@@ -440,17 +364,6 @@ const CartButton = styled.div`
   gap: 20px;
 `;
 
-const CartSize = styled.div`
-  border-radius: 62px;
-  background: #f0f0f0;
-  width: 178px;
-  display: flex;
-  padding: 16px 20px;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-`;
-
 const AddCart = styled.div`
   border-radius: 62px;
   background: #000;
@@ -470,16 +383,9 @@ const AddCart = styled.div`
 const Cart = styled.div`
   color: #fff;
   font-family: "Satoshi";
+  display: flex;
   font-size: 16px;
   font-weight: 500;
-`;
-
-const Increment = styled.div`
-  cursor: pointer;
-`;
-
-const Decrement = styled.div`
-  cursor: pointer;
 `;
 
 const Green = styled.div`

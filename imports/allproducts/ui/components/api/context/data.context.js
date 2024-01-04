@@ -14,7 +14,6 @@ const DataProvider = ({ children }) => {
     product: [],
     singleProduct: null,
     allCart: [],
-    cart: null,
   });
 
   const handleDataState = (name, payload) => {

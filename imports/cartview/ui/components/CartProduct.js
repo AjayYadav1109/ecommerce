@@ -9,7 +9,6 @@ import { withData } from "@/imports/allproducts/ui/components/api/context/data.c
 import { useRouter } from "next/router";
 import StarSvg from "@/assets/StarSvg";
 import nookies from "nookies";
-import { useEffect } from "react";
 
 const CartProduct = () => {
   const router = useRouter();
@@ -18,10 +17,6 @@ const CartProduct = () => {
     handleDataState,
   } = withData();
   const { token } = nookies.get({});
-
-  useEffect(() => {
-    getCart(token);
-  }, []);
 
   const getCart = async (token) => {
     const response = await fetch("http://localhost:8080/api/cart/carts", {
@@ -48,7 +43,6 @@ const CartProduct = () => {
     );
     if (response.ok) {
       const responseData = await response.json();
-      handleDataState("cart", responseData.cartItem);
       getCart(token);
     }
   };
@@ -65,7 +59,6 @@ const CartProduct = () => {
     );
     if (response.ok) {
       const responseData = await response.json();
-      handleDataState("cart", responseData.cartItem);
       getCart(token);
     }
   };
