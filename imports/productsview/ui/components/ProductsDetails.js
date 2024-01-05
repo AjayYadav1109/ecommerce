@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
 import nookies from "nookies";
+import { BASE_URL } from "@/config";
 
 const ProductsDetails = () => {
   const {
@@ -22,15 +23,12 @@ const ProductsDetails = () => {
   const [showCart, setShowCart] = useState(false);
 
   const cartHandler = (id) => async () => {
-    const response = await fetch(
-      `http://localhost:8080/api/cart/carts?productId=${id}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
+      method: "POST",
+      headers: {
+        Authorization: token,
+      },
+    });
     if (response.ok) {
       const responseData = await response.json();
       setShowCart(true);

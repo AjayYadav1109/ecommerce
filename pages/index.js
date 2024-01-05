@@ -4,6 +4,7 @@ import LandingPage from "@/imports/landing/ui/pages/Landing";
 import { Fragment, useEffect } from "react";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
 import nookies, { parseCookies } from "nookies";
+import { BASE_URL } from "@/config";
 // const LandingPage = dynamic(
 //   () => import("@/imports/landing/ui/pages/Landing"),
 //   {
@@ -41,14 +42,11 @@ const LandingHomePage = ({ categoryData, cartData }) => {
 LandingHomePage.getInitialProps = async (ctx) => {
   const { token } = parseCookies(ctx);
 
-  const categoryResponse = fetch(
-    "http://localhost:8080/api/category/categories",
-    {
-      method: "GET",
-    }
-  ).then((res) => res.json());
+  const categoryResponse = fetch(`${BASE_URL}/category/categories`, {
+    method: "GET",
+  }).then((res) => res.json());
 
-  const cartResponse = fetch("http://localhost:8080/api/cart/carts", {
+  const cartResponse = fetch(`${BASE_URL}/cart/carts`, {
     method: "GET",
     headers: { Authorization: token },
   }).then((res) => res.json());

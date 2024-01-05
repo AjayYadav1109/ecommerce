@@ -1,7 +1,15 @@
+import { BASE_URL } from "@/config";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
-import ProductInfo from "@/imports/allproducts/ui/components/pages/ProductInfo";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+
+const ProductInfo = dynamic(
+  () => import("@/imports/allproducts/ui/components/pages/ProductInfo"),
+  {
+    ssr: false,
+  }
+);
 
 const productCollection = ({ productData, filterData }) => {
   const router = useRouter();
@@ -28,14 +36,14 @@ productCollection.getInitialProps = async (ctx) => {
   const sid = params.get("sid");
 
   const productResponse = await fetch(
-    `http://localhost:8080/api/product/products?subcategoryId=${sid}`,
+    `${BASE_URL}/product/products?subcategoryId=${sid}`,
     {
       method: "GET",
     }
   ).then((res) => res.json());
 
   const filterResponse = await fetch(
-    `http://localhost:8080/api/subcategory/subcategories?categoryId=${cid}`,
+    `${BASE_URL}/subcategory/subcategories?categoryId=${cid}`,
     {
       method: "GET",
     }
@@ -52,23 +60,6 @@ productCollection.getInitialProps = async (ctx) => {
       console.log("Error fetching data:", error);
       return { productData: null, filterData: null };
     });
-  // try {
-  //   const response = await fetch(
-  //     `http://localhost:8080/api/subcategory/subcategories?categoryId=${cid}`,
-  //     {
-  //       method: "GET",
-  //     }
-  //   );
-  //   if (response.ok) {
-  //     const responseData = await response.json();
-  //     return { pageProps: responseData };
-  //   } else {
-  //     throw new Error("API request failed");
-  //   }
-  // } catch (error) {
-  //   console.error("Error fetching subcategories:", error);
-  //   return { pageProps: null };
-  // }
 };
 
 export default productCollection;

@@ -13,6 +13,7 @@ const DataProvider = ({ children }) => {
     selectedSubcategory: null,
     product: [],
     singleProduct: null,
+    isLoading: false,
     allCart: [],
   });
 

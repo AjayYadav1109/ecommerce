@@ -9,6 +9,7 @@ import { withData } from "@/imports/allproducts/ui/components/api/context/data.c
 import { useRouter } from "next/router";
 import StarSvg from "@/assets/StarSvg";
 import nookies from "nookies";
+import { BASE_URL } from "@/config";
 
 const CartProduct = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const CartProduct = () => {
   const { token } = nookies.get({});
 
   const getCart = async (token) => {
-    const response = await fetch("http://localhost:8080/api/cart/carts", {
+    const response = await fetch(`${BASE_URL}/cart/carts`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -32,15 +33,12 @@ const CartProduct = () => {
   };
 
   const incrementHandler = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/cart/carts?productId=${id}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
+      method: "POST",
+      headers: {
+        Authorization: token,
+      },
+    });
     if (response.ok) {
       const responseData = await response.json();
       getCart(token);
@@ -48,15 +46,12 @@ const CartProduct = () => {
   };
 
   const decrementHandler = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/cart/carts?itemId=${id}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: token,
+      },
+    });
     if (response.ok) {
       const responseData = await response.json();
       getCart(token);
@@ -64,15 +59,12 @@ const CartProduct = () => {
   };
 
   const removeHandler = async (id) => {
-    const response = await fetch(
-      `http://localhost:8080/api/cart/carts?itemId=${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token,
+      },
+    });
     if (response.ok) {
       const responseData = await response.json();
       getCart(token);

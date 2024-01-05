@@ -1,6 +1,14 @@
+import { BASE_URL } from "@/config";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
-import ProductAllDetails from "@/imports/productsview/ui/components/pages/ProductAllDetails";
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
+
+const ProductAllDetails = dynamic(
+  () => import("@/imports/productsview/ui/components/pages/ProductAllDetails"),
+  {
+    ssr: false,
+  }
+);
 
 const productView = ({ pageProps }) => {
   const { handleDataState } = withData();
@@ -18,7 +26,7 @@ productView.getInitialProps = async (ctx) => {
   const { id } = ctx.query;
   try {
     const response = await fetch(
-      `http://localhost:8080/api/product/product?productId=${id}`,
+      `${BASE_URL}/product/product?productId=${id}`,
       {
         method: "GET",
       }

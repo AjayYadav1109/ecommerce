@@ -1,7 +1,15 @@
+import { BASE_URL } from "@/config";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
-import CartProduct from "@/imports/cartview/ui/components/CartProduct";
+import dynamic from "next/dynamic";
 import { parseCookies } from "nookies";
 import { useEffect } from "react";
+
+const CartProduct = dynamic(
+  () => import("@/imports/cartview/ui/components/CartProduct"),
+  {
+    ssr: false,
+  }
+);
 
 const cartView = ({ pageProps }) => {
   const { handleDataState } = withData();
@@ -20,7 +28,7 @@ const cartView = ({ pageProps }) => {
 cartView.getInitialProps = async (ctx) => {
   const { token } = parseCookies(ctx);
   try {
-    const response = await fetch("http://localhost:8080/api/cart/carts", {
+    const response = await fetch(`${BASE_URL}/cart/carts`, {
       method: "GET",
       headers: {
         Authorization: token,

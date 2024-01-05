@@ -20,38 +20,6 @@ import ReactSlider from "react-slider";
 import { useEffect } from "react";
 import { withData } from "./api/context/data.context";
 
-const MultipleProductsOne = [
-  {
-    title: "Gradient Graphic T-shirt",
-    rating: "3/5",
-    rate: "$145",
-    star: [...Array(3)].map((_, i) => <StarSvg key={i} />),
-    src: "/image20.png",
-    alt: "image-20",
-    id: 10,
-  },
-  {
-    title: "Polo with Tipping Details",
-    rating: "4/5",
-    rate: "$180",
-    star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
-    src: "/image21.png",
-    alt: "image-21",
-    id: 11,
-  },
-  {
-    title: "Black Striped T-shirt",
-    rating: "5/5",
-    rate: "$120",
-    star: [...Array(5)].map((_, i) => <StarSvg key={i} />),
-    src: "/image22.png",
-    alt: "image-22",
-    discount: "$150",
-    offer: "-30%",
-    id: 12,
-  },
-];
-
 const MultipleProductsTwo = [
   {
     title: "Skinny Fit Jeans",

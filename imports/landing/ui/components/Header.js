@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
 import DropdownSvg from "@/assets/DropdownSvg";
 import Profile from "@/assets/Profile";
@@ -8,13 +8,14 @@ import LoginModal from "./LoginModal";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
 import { useRouter } from "next/router";
 import nookies, { destroyCookie } from "nookies";
+import { BASE_URL } from "@/config";
+import Loader from "@/imports/atoms/Loader";
 
 const Header = () => {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  // const [showSubcategory, setShowSubcategory] = useState(false);
   const {
-    state: { allCategory, subcategory, allCart },
+    state: { allCategory, subcategory, allCart, isLoading },
     handleDataState,
   } = withData();
   const router = useRouter();
@@ -27,19 +28,20 @@ const Header = () => {
     router.push("/");
   };
 
-  const getSubcategory = async (id) => {
+  const getSubcategory = (id) => async () => {
+    handleDataState("isLoading", true);
     if (subcategory[0]?.categoryId !== id) {
       const response = await fetch(
-        `http://localhost:8080/api/subcategory/subcategories?categoryId=${id}`,
+        `${BASE_URL}/subcategory/subcategories?categoryId=${id}`,
         { method: "GET" }
       );
       if (response.ok) {
         const responseData = await response.json();
-        handleDataState("subcategory", responseData.category.subcategories);
+        handleDataState("subcategory", responseData?.category?.subcategories);
       }
     }
+    handleDataState("isLoading", false);
   };
-
   const quantity = allCart?.reduce((acc, item) => {
     return acc + item.quantity;
   }, 0);
@@ -55,30 +57,31 @@ const Header = () => {
           <Logo>SHOP.CO</Logo>
           {allCategory?.map((category) => (
             <Icon
-              onMouseEnter={() => getSubcategory(category._id)}
+              onMouseEnter={getSubcategory(category._id)}
               key={category._id}
             >
               <Shop>{category.category_name}</Shop>
               <Dropdown>
-                {subcategory.map((sub) => (
-                  <AllSub key={sub._id}>
-                    <Sub
-                      onClick={() => productHandler(sub.categoryId, sub._id)}
-                    >
-                      {sub.subcategory_name}
-                    </Sub>
-                  </AllSub>
-                ))}
+                {isLoading ? (
+                  <Loader />
+                ) : (
+                  <>
+                    {subcategory.map((sub) => (
+                      <AllSub key={sub._id}>
+                        <Sub
+                          onClick={() =>
+                            productHandler(sub.categoryId, sub._id)
+                          }
+                        >
+                          {sub.subcategory_name}
+                        </Sub>
+                      </AllSub>
+                    ))}
+                  </>
+                )}
               </Dropdown>
             </Icon>
           ))}
-          {/* <Shop>
-              <p>Shop</p>
-              <DropdownSvg />
-            </Shop>
-            <Sale>On Sale</Sale>
-            <Arrival>New Arrivals</Arrival>
-            <Brand>Brands</Brand> */}
           <Search>
             <WrapSearch>
               <Svg>
@@ -118,16 +121,13 @@ export default Header;
 
 const Dropdown = styled.div`
   top: 96px;
-  height: 100px;
   background-color: #fff;
-  width: 100%;
+  width: 50%;
   display: none;
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  justify-content: center;
   position: absolute;
-  z-index: 2;
 `;
 
 const Container = styled.div`
@@ -142,7 +142,8 @@ const Container = styled.div`
 
 const AllSub = styled.div`
   background-color: white;
-  width: 45%;
+  width: 100%;
+  justify-content: flex-start;
   padding: 5px;
 `;
 
@@ -205,7 +206,6 @@ const Logo = styled.div`
 const Icon = styled.div`
   color: #000;
   display: flex;
-  gap: 24px;
   align-items: center;
   height: 96px;
   font-family: "Satoshi";

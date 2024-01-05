@@ -1,3 +1,4 @@
+import { BASE_URL } from "@/config";
 import { useRouter } from "next/router";
 import { setCookie } from "nookies";
 import React, { useEffect, useRef, useState } from "react";
@@ -54,7 +55,7 @@ const LoginModal = ({ setShowModal }) => {
       password: formData.password,
     };
     try {
-      const response = await fetch("http://localhost:8080/api/user/signup", {
+      const response = await fetch(`${BASE_URL}/user/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ const LoginModal = ({ setShowModal }) => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/user/login", {
+      const response = await fetch(`${BASE_URL}/user/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
