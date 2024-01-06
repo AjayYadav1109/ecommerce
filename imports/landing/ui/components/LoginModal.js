@@ -80,6 +80,7 @@ const LoginModal = ({ setShowModal }) => {
         setShowSuccessMessage("");
         setShowErrorMessage("");
         setShowModal(false);
+        router.push("/");
       }, 2000);
     }
   };
@@ -114,7 +115,7 @@ const LoginModal = ({ setShowModal }) => {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
         });
-        setShowSuccessMessage("Login SuccessFul");
+        setShowSuccessMessage("Login Successful");
       } else {
         setShowErrorMessage("Login Failed");
       }
@@ -131,9 +132,8 @@ const LoginModal = ({ setShowModal }) => {
     }
   };
 
-  const reverseHandler = () => {
-    setIsLogin(!isLogin);
-  };
+  const reverseHandler = () => setIsLogin(!isLogin);
+
   return (
     <Overlay>
       <ModalContent>

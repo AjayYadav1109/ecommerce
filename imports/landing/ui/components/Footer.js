@@ -11,6 +11,8 @@ import styled from "styled-components";
 const Footer = () => {
   const [inputBox, setInputBox] = useState("");
 
+  const inputHandler = (e) => setInputBox(e.target.value);
+
   return (
     <Container>
       <InputWrap>
@@ -22,7 +24,7 @@ const Footer = () => {
               <InputBox
                 type="text"
                 placeholder="Enter your email address"
-                onChange={(e) => setInputBox(e.target.value)}
+                onChange={inputHandler}
                 value={inputBox}
               />
             </InputParent>

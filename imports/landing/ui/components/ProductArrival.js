@@ -100,10 +100,10 @@ const ProductArrival = () => {
                   <MainImg src={items.src} alt={items.alt} />
                   <Title>{items.title}</Title>
                   <StarRating>
-                    <div>
+                    <Div>
                       {items.star}
                       <HalfStarSvg />
-                    </div>
+                    </Div>
                     <Rating>{items.rating}</Rating>
                   </StarRating>
                   <DisRate>
@@ -116,7 +116,7 @@ const ProductArrival = () => {
             ))}
           </ArrivalProduct>
           <ButtonSpace>
-            <Link href="/product-collection/65785509e29e11e1cdcc3077">
+            <Link href="/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077">
               <ViewButton>View All</ViewButton>
             </Link>
           </ButtonSpace>
@@ -131,7 +131,7 @@ const ProductArrival = () => {
                   <MainImg src={items.src} alt={items.alt} />
                   <Title>{items.title}</Title>
                   <StarRating>
-                    <div>{items.star}</div>
+                    <Div>{items.star}</Div>
                     <Rating>{items.rating}</Rating>
                   </StarRating>
                   <DisRate>
@@ -144,7 +144,7 @@ const ProductArrival = () => {
             ))}
           </SellingProduct>
           <ButtonSpace>
-            <Link href="/product-collection/65785509e29e11e1cdcc3077">
+            <Link href="/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077">
               <ViewButtonTwo>View All</ViewButtonTwo>
             </Link>
           </ButtonSpace>
@@ -191,6 +191,8 @@ const ArrPara = styled.div`
   justify-content: center;
   margin: 72px 0 55px 0;
 `;
+
+const Div = styled.div``;
 
 const SellPara = styled.div`
   font-family: "Integral CF";

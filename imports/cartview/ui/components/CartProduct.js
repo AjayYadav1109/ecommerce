@@ -20,56 +20,87 @@ const CartProduct = () => {
   const { token } = nookies.get({});
 
   const getCart = async (token) => {
-    const response = await fetch(`${BASE_URL}/cart/carts`, {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      handleDataState("allCart", responseData.cartItems);
+    try {
+      const response = await fetch(`${BASE_URL}/cart/carts`, {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        handleDataState("allCart", responseData.cartItems);
+      } else {
+        throw new Error("Failed to fetch cart");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const incrementHandler = async (id) => {
-    const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
-      method: "POST",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      getCart(token);
+  const incrementHandler = (id) => async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        getCart(token);
+      } else {
+        throw new Error("Failed to add item from cart");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const decrementHandler = async (id) => {
-    const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      getCart(token);
+  const decrementHandler = (id) => async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        getCart(token);
+      } else {
+        throw new Error("Failed to remove item from cart");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const removeHandler = async (id) => {
-    const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      getCart(token);
+  const removeHandler = (id) => async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        getCart(token);
+      } else {
+        throw new Error("Failed to delete item from cart");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
+
+  const homeHandler = () => router.push("/");
+
+  const backBtnHandler = () =>
+    router.push(
+      "/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077"
+    );
 
   const subtotal = allCart.reduce((acc, item) => {
     return acc + item.productId.price * item.quantity;
@@ -83,7 +114,7 @@ const CartProduct = () => {
     <Container>
       <Wrapper>
         <TopHead>
-          <Home onClick={() => router.push("/")}>Home</Home>
+          <Home onClick={homeHandler}>Home</Home>
           <ArrowSvg />
           <Cart>Cart</Cart>
         </TopHead>
@@ -96,11 +127,7 @@ const CartProduct = () => {
             />
             <EmptyCart>Hey, it feels so light!</EmptyCart>
             <Empty>There is nothing in your bag. Let's add some items.</Empty>
-            <BackBtn
-              onClick={() =>
-                router.push("product-collection/65785509e29e11e1cdcc3077")
-              }
-            >
+            <BackBtn onClick={backBtnHandler}>
               ADD ITEMS FROM PRODUCT LIST
             </BackBtn>
           </EmptyBag>
@@ -117,7 +144,7 @@ const CartProduct = () => {
                     <Count>
                       <Delete>
                         <Title>{items.productId.product_name}</Title>
-                        <Del onClick={() => removeHandler(items._id)}>
+                        <Del onClick={removeHandler(items._id)}>
                           <DeleteSvg />
                         </Del>
                       </Delete>
@@ -132,9 +159,7 @@ const CartProduct = () => {
                         <Price>₹{items.productId.price}</Price>
                         <Btn>
                           <Decrement
-                            onClick={() =>
-                              incrementHandler(items.productId._id)
-                            }
+                            onClick={incrementHandler(items.productId._id)}
                           >
                             <DecrementSvg />
                           </Decrement>
@@ -142,7 +167,7 @@ const CartProduct = () => {
                           <Increment
                             onClick={
                               items.quantity > 1
-                                ? () => decrementHandler(items._id)
+                                ? decrementHandler(items._id)
                                 : null
                             }
                           >

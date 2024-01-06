@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
-import DropdownSvg from "@/assets/DropdownSvg";
 import Profile from "@/assets/Profile";
 import Cart from "@/assets/Cart";
 import LoginModal from "./LoginModal";
@@ -30,15 +29,21 @@ const Header = () => {
 
   const getSubcategory = (id) => async () => {
     handleDataState("isLoading", true);
-    if (subcategory[0]?.categoryId !== id) {
-      const response = await fetch(
-        `${BASE_URL}/subcategory/subcategories?categoryId=${id}`,
-        { method: "GET" }
-      );
-      if (response.ok) {
-        const responseData = await response.json();
-        handleDataState("subcategory", responseData?.category?.subcategories);
+    try {
+      if (subcategory[0]?.categoryId !== id) {
+        const response = await fetch(
+          `${BASE_URL}/subcategory/subcategories?categoryId=${id}`,
+          { method: "GET" }
+        );
+        if (response.ok) {
+          const responseData = await response.json();
+          handleDataState("subcategory", responseData?.category?.subcategories);
+        } else {
+          throw new Error("Failed to fetch subcategory names");
+        }
       }
+    } catch (error) {
+      console.error(error);
     }
     handleDataState("isLoading", false);
   };
@@ -46,9 +51,12 @@ const Header = () => {
     return acc + item.quantity;
   }, 0);
 
-  const productHandler = (cid, sid) => {
+  const productHandler = (cid, sid) => () =>
     router.push(`/product-collection/cid=${cid}&sid=${sid}`);
-  };
+
+  const cartRouteHandler = () => router.push("cartview");
+
+  const profileHandler = () => setShowModal(true);
 
   return (
     <>
@@ -68,11 +76,7 @@ const Header = () => {
                   <>
                     {subcategory.map((sub) => (
                       <AllSub key={sub._id}>
-                        <Sub
-                          onClick={() =>
-                            productHandler(sub.categoryId, sub._id)
-                          }
-                        >
+                        <Sub onClick={productHandler(sub.categoryId, sub._id)}>
                           {sub.subcategory_name}
                         </Sub>
                       </AllSub>
@@ -96,12 +100,12 @@ const Header = () => {
             </WrapSearch>
           </Search>
           <Carts>
-            <CartSvg onClick={() => router.push("cartview")}>
+            <CartSvg onClick={cartRouteHandler}>
               <Cart />
               {token && <Quantity>{quantity}</Quantity>}
             </CartSvg>
             {!token ? (
-              <ProfileSvg onClick={() => setShowModal(true)}>
+              <ProfileSvg onClick={profileHandler}>
                 <Profile />
               </ProfileSvg>
             ) : (

@@ -26,24 +26,24 @@ const HomePage = () => {
               </Small>
             </SmallPara>
           </Paras>
-          <div>
-            <Link href="product-collection/65785509e29e11e1cdcc3077">
+          <Div>
+            <Link href="/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077">
               <ShopButton>Shop Now</ShopButton>
             </Link>
-          </div>
+          </Div>
           <Details>
-            <div>
+            <Div>
               <Number>200+</Number>
               <Brand>International Brands</Brand>
-            </div>
-            <div>
+            </Div>
+            <Div>
               <Number>2,000+</Number>
               <Brand>High-Quality Products</Brand>
-            </div>
-            <div>
+            </Div>
+            <Div>
               <Number>30,000+</Number>
               <Brand>Happy Customers</Brand>
-            </div>
+            </Div>
           </Details>
         </FirstBox>
       </Wrapper>
@@ -97,9 +97,9 @@ const SmallPara = styled.div`
   align-items: center;
 `;
 
-const FirstBox = styled.div`
-  /* width: 50%; */
-`;
+const Div = styled.div``;
+
+const FirstBox = styled.div``;
 
 const Paras = styled.div`
   display: flex;

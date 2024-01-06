@@ -5,9 +5,7 @@ import BrownSvg from "@/assets/ColorSvg/BrownSvg";
 import GreenSvg from "@/assets/ColorSvg/GreenSvg";
 import PurpleSvg from "@/assets/ColorSvg/PurpleSvg";
 import CorrectSvg from "@/assets/ColorSvg/Correct";
-import ArrowBoldSvg from "@/assets/ArrowBoldSvg";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
 import nookies from "nookies";
@@ -23,28 +21,34 @@ const ProductsDetails = () => {
   const [showCart, setShowCart] = useState(false);
 
   const cartHandler = (id) => async () => {
-    const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
-      method: "POST",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      setShowCart(true);
+    try {
+      const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        setShowCart(true);
+      } else {
+        throw new Error("Failed to add item");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const checkoutHandler = () => {
-    router.push("/cartview");
-  };
+  const checkoutHandler = () => router.push("/cartview");
+
+  const homeHandler = () => router.push("/");
 
   return (
     <Container>
       <Wrapper>
         <Margin />
         <HeadTag>
-          <Head onClick={() => router.push("/")}>Home</Head>
+          <Head onClick={homeHandler}>Home</Head>
           <ArrowSvg />
           <Head>Shop</Head>
           <ArrowSvg />
@@ -55,15 +59,15 @@ const ProductsDetails = () => {
         <ImageContentWrapper>
           <ImgWrap>
             <SmallImg>
-              <div>
-                <img src="/image2.png" alt="image-2" />
-              </div>
-              <div>
-                <img src="/image5.png" alt="image-5" />
-              </div>
-              <div>
-                <img src="/image6.png" alt="image-6" />
-              </div>
+              <Div>
+                <ImageTag src="/image2.png" alt="image-2" />
+              </Div>
+              <Div>
+                <ImageTag src="/image5.png" alt="image-5" />
+              </Div>
+              <Div>
+                <ImageTag src="/image6.png" alt="image-6" />
+              </Div>
             </SmallImg>
             <Img src={singleProduct?.product_img} alt="image-1" />
           </ImgWrap>
@@ -130,7 +134,7 @@ const ProductsDetails = () => {
                 <AddCart
                   onClick={!showCart ? cartHandler(id) : checkoutHandler}
                 >
-                  <Cart>{!showCart ? "Add To Cart" : "Go To Cart"}</Cart>
+                  <Cart>{!showCart ? "Add To Cart" : "Go To Cart ➔"}</Cart>
                 </AddCart>
               }
             </CartButton>
@@ -167,6 +171,10 @@ const Margin = styled.div`
   background: rgba(0, 0, 0, 0.1);
   height: 1px;
 `;
+
+const Div = styled.div``;
+
+const ImageTag = styled.img``;
 
 const HeadTag = styled.div`
   margin: 24px 0 0 0;

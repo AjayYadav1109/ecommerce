@@ -57,7 +57,7 @@ const SuggestionProduct = () => {
                 <MainImg src={items.src} alt={items.alt} />
                 <Title>{items.title}</Title>
                 <StarRating>
-                  <div>{items.star}</div>
+                  <Div>{items.star}</Div>
                   <Rating>{items.rating}</Rating>
                 </StarRating>
                 <DisRate>
@@ -92,6 +92,8 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+const Div = styled.div``;
 
 const LikePara = styled.div`
   color: #000;

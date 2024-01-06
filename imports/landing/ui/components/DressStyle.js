@@ -7,24 +7,24 @@ const DressStyle = () => {
         <Heading>BROWSE BY DRESS STYLE</Heading>
         <ImgWrap>
           <MultiImg>
-            <div>
+            <Div>
               <Dress>Casual</Dress>
               <Image src="/image18.png" alt="image-18" />
-            </div>
-            <div>
+            </Div>
+            <Div>
               <Dress>Formal</Dress>
               <Image src="/image16.png" alt="image-16" />
-            </div>
+            </Div>
           </MultiImg>
           <MultiImg>
-            <div>
+            <Div>
               <Dress>Party</Dress>
               <Image src="/image15.png" alt="image-15" />
-            </div>
-            <div>
+            </Div>
+            <Div>
               <Dress>Gym</Dress>
               <Image src="/image17.png" alt="image-17" />
-            </div>
+            </Div>
           </MultiImg>
         </ImgWrap>
       </Wrapper>
@@ -67,6 +67,8 @@ const ImgWrap = styled.div`
   gap: 15px;
   margin: 76px 0;
 `;
+
+const Div = styled.div``;
 
 const MultiImg = styled.div`
   display: flex;

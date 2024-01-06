@@ -106,21 +106,21 @@ const AllTypeProducts = () => {
   //   getProducts(id);
   // }, [id]);
 
-  const HandleProduct = (id) => {
-    router.push(`/products/${id}`);
-  };
+  const HandleProduct = (id) => () => router.push(`/products/${id}`);
 
-  const filterHandler = (cid, sid) => {
+  const filterHandler = (cid, sid) => () => {
     handleDataState("selectedSubcategory", sid);
     router.push(`/product-collection/cid=${cid}&sid=${sid}`);
   };
+
+  const homeHandler = () => router.push("/");
 
   return (
     <Container>
       <Wrapper>
         <Margin />
         <TopHead>
-          <Home onClick={() => router.push("/")}>Home</Home>
+          <Home onClick={homeHandler}>Home</Home>
           <ArrowSvg />
           <Casual>{selectedSubcategory?.subcategory_name}</Casual>
         </TopHead>
@@ -131,9 +131,9 @@ const AllTypeProducts = () => {
             </FilterRow>
             <Margin />
             <Varities>
-              {subcategory.map((sub) => (
+              {subcategory?.map((sub) => (
                 <VarGroup
-                  onClick={() => filterHandler(sub.categoryId, sub._id)}
+                  onClick={filterHandler(sub.categoryId, sub._id)}
                   key={sub._id}
                   active={sub._id === selectedSubcategory?._id}
                 >
@@ -256,11 +256,8 @@ const AllTypeProducts = () => {
             </MainHeadline>
             <MultipleRow>
               <SellingProduct>
-                {product.map((items) => (
-                  <MainDiv
-                    onClick={() => HandleProduct(items._id)}
-                    key={items._id}
-                  >
+                {product?.map((items) => (
+                  <MainDiv onClick={HandleProduct(items._id)} key={items._id}>
                     <MainImg src={items.product_img} alt="product" />
                     <Title>{items.product_name}</Title>
                     <StarRating>
@@ -280,14 +277,11 @@ const AllTypeProducts = () => {
               </SellingProduct>
               <SellingProduct>
                 {MultipleProductsTwo.map((items) => (
-                  <MainDiv
-                    onClick={() => HandleProduct(items.id)}
-                    key={items.title}
-                  >
+                  <MainDiv onClick={HandleProduct(items.id)} key={items.title}>
                     <MainImg src={items.src} alt={items.alt} />
                     <Title>{items.title}</Title>
                     <StarRating>
-                      <div>{items.star}</div>
+                      <Div>{items.star}</Div>
                       <Rating>{items.rating}</Rating>
                     </StarRating>
                     <DisRate>
@@ -300,14 +294,11 @@ const AllTypeProducts = () => {
               </SellingProduct>
               <SellingProduct>
                 {MultipleProductsThree.map((items) => (
-                  <MainDiv
-                    onClick={() => HandleProduct(items.id)}
-                    key={items.title}
-                  >
+                  <MainDiv onClick={HandleProduct(items.id)} key={items.title}>
                     <MainImg src={items.src} alt={items.alt} />
                     <Title>{items.title}</Title>
                     <StarRating>
-                      <div>{items.star}</div>
+                      <Div>{items.star}</Div>
                       <Rating>{items.rating}</Rating>
                     </StarRating>
                     <DisRate>
@@ -370,6 +361,8 @@ const VarGroup = styled.div`
       border-radius: 10px;
     `}
 `;
+
+const Div = styled.div``;
 
 const Container = styled.div`
   display: flex;
