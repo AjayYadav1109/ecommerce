@@ -18,7 +18,7 @@ import StarSvg from "@/assets/StarSvg";
 import { useRouter } from "next/router";
 import ReactSlider from "react-slider";
 import { useEffect } from "react";
-import { withData } from "./api/context/data.context";
+import { withData } from "../../apis/context/data.context";
 
 const MultipleProductsTwo = [
   {

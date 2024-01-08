@@ -1,4 +1,7 @@
-import { BASE_URL } from "@/config";
+import {
+  handleLoginApi,
+  handleRegisterApi,
+} from "@/imports/allproducts/apis/api/api";
 import { useRouter } from "next/router";
 import { setCookie } from "nookies";
 import React, { useEffect, useRef, useState } from "react";
@@ -55,13 +58,7 @@ const LoginModal = ({ setShowModal }) => {
       password: formData.password,
     };
     try {
-      const response = await fetch(`${BASE_URL}/user/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signUpData),
-      });
+      const response = await handleRegisterApi(signUpData);
       if (response.ok) {
         const responseData = await response.json();
         setCookie(null, "token", responseData.token, {
@@ -102,13 +99,7 @@ const LoginModal = ({ setShowModal }) => {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/user/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      });
+      const response = await handleLoginApi(loginData);
       if (response.ok) {
         const responseData = await response.json();
         setCookie(null, "token", responseData.token, {

@@ -5,11 +5,16 @@ import DecrementSvg from "@/assets/DecrementSvg";
 import IncrementSvg from "@/assets/IncrementSvg";
 import FrameSvg from "@/assets/FrameSvg";
 import ArrowBoldSvg from "@/assets/ArrowBoldSvg";
-import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { withData } from "@/imports/allproducts/apis/context/data.context";
 import { useRouter } from "next/router";
 import StarSvg from "@/assets/StarSvg";
 import nookies from "nookies";
-import { BASE_URL } from "@/config";
+import {
+  handleAddToCartApi,
+  handleCartApi,
+  handleDeleteFromCartApi,
+  handleRemoveFromCartApi,
+} from "@/imports/allproducts/apis/api/api";
 
 const CartProduct = () => {
   const router = useRouter();
@@ -18,21 +23,11 @@ const CartProduct = () => {
     handleDataState,
   } = withData();
   const { token } = nookies.get({});
-
+  console.log("allCart", allCart);
   const getCart = async (token) => {
     try {
-      const response = await fetch(`${BASE_URL}/cart/carts`, {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (response.ok) {
-        const responseData = await response.json();
-        handleDataState("allCart", responseData.cartItems);
-      } else {
-        throw new Error("Failed to fetch cart");
-      }
+      const responseData = await handleCartApi(token);
+      handleDataState("allCart", responseData.cartItems);
     } catch (error) {
       console.error(error);
     }
@@ -40,18 +35,8 @@ const CartProduct = () => {
 
   const incrementHandler = (id) => async () => {
     try {
-      const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (response.ok) {
-        const responseData = await response.json();
-        getCart(token);
-      } else {
-        throw new Error("Failed to add item from cart");
-      }
+      const response = await handleAddToCartApi(id, token);
+      getCart(token);
     } catch (error) {
       console.error(error);
     }
@@ -59,18 +44,8 @@ const CartProduct = () => {
 
   const decrementHandler = (id) => async () => {
     try {
-      const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (response.ok) {
-        const responseData = await response.json();
-        getCart(token);
-      } else {
-        throw new Error("Failed to remove item from cart");
-      }
+      const response = await handleRemoveFromCartApi(id, token);
+      getCart(token);
     } catch (error) {
       console.error(error);
     }
@@ -78,18 +53,8 @@ const CartProduct = () => {
 
   const removeHandler = (id) => async () => {
     try {
-      const response = await fetch(`${BASE_URL}/cart/carts?itemId=${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (response.ok) {
-        const responseData = await response.json();
-        getCart(token);
-      } else {
-        throw new Error("Failed to delete item from cart");
-      }
+      const response = await handleDeleteFromCartApi(id, token);
+      getCart(token);
     } catch (error) {
       console.error(error);
     }

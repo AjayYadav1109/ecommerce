@@ -1,5 +1,5 @@
-import { BASE_URL } from "@/config";
-import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { handleCartApi } from "@/imports/allproducts/apis/api/api";
+import { withData } from "@/imports/allproducts/apis/context/data.context";
 import dynamic from "next/dynamic";
 import { parseCookies } from "nookies";
 import { useEffect } from "react";
@@ -28,21 +28,11 @@ const cartView = ({ pageProps }) => {
 cartView.getInitialProps = async (ctx) => {
   const { token } = parseCookies(ctx);
   try {
-    const response = await fetch(`${BASE_URL}/cart/carts`, {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      return { pageProps: responseData.cartItems };
-    } else {
-      throw new Error("API request failed");
-    }
+    const responseData = await handleCartApi(token);
+    return { pageProps: responseData.cartItems };
   } catch (error) {
     console.log("Error fetching cart:", error);
-    return { pageProps: null };
+    return { pageProps: [] };
   }
 };
 

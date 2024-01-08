@@ -1,6 +1,6 @@
 import GlobalStyles from "@/styles/GlobalStyles";
 import "../styles/globals.css";
-import DataProvider from "@/imports/allproducts/ui/components/api/context/data.context";
+import DataProvider from "@/imports/allproducts/apis/context/data.context";
 
 export default function App({ Component, pageProps }) {
   return (

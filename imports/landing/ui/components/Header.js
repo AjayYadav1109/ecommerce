@@ -4,11 +4,11 @@ import SearchSvg from "@/assets/SearchSvg";
 import Profile from "@/assets/Profile";
 import Cart from "@/assets/Cart";
 import LoginModal from "./LoginModal";
-import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { withData } from "@/imports/allproducts/apis/context/data.context";
 import { useRouter } from "next/router";
 import nookies, { destroyCookie } from "nookies";
-import { BASE_URL } from "@/config";
-import Loader from "@/imports/atoms/Loader";
+import Loader from "@/imports/allproducts/atoms/Loader";
+import { handleFilterApi } from "@/imports/allproducts/apis/api/api";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -31,16 +31,9 @@ const Header = () => {
     handleDataState("isLoading", true);
     try {
       if (subcategory[0]?.categoryId !== id) {
-        const response = await fetch(
-          `${BASE_URL}/subcategory/subcategories?categoryId=${id}`,
-          { method: "GET" }
-        );
-        if (response.ok) {
-          const responseData = await response.json();
-          handleDataState("subcategory", responseData?.category?.subcategories);
-        } else {
-          throw new Error("Failed to fetch subcategory names");
-        }
+        const response = await handleFilterApi(id);
+        const subcategories = response?.category?.subcategories;
+        handleDataState("subcategory", subcategories);
       }
     } catch (error) {
       console.error(error);
@@ -269,16 +262,6 @@ const Shop = styled.div`
   display: flex;
   gap: 4px;
   align-items: center;
-  cursor: pointer;
-`;
-
-const Sale = styled.div`
-  cursor: pointer;
-`;
-const Arrival = styled.div`
-  cursor: pointer;
-`;
-const Brand = styled.div`
   cursor: pointer;
 `;
 

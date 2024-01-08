@@ -7,9 +7,9 @@ import PurpleSvg from "@/assets/ColorSvg/PurpleSvg";
 import CorrectSvg from "@/assets/ColorSvg/Correct";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { withData } from "@/imports/allproducts/apis/context/data.context";
 import nookies from "nookies";
-import { BASE_URL } from "@/config";
+import { handleAddToCartApi } from "@/imports/allproducts/apis/api/api";
 
 const ProductsDetails = () => {
   const {
@@ -22,18 +22,8 @@ const ProductsDetails = () => {
 
   const cartHandler = (id) => async () => {
     try {
-      const response = await fetch(`${BASE_URL}/cart/carts?productId=${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (response.ok) {
-        const responseData = await response.json();
-        setShowCart(true);
-      } else {
-        throw new Error("Failed to add item");
-      }
+      const response = await handleAddToCartApi(id, token);
+      setShowCart(true);
     } catch (error) {
       console.error(error);
     }

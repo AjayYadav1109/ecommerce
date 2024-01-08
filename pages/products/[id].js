@@ -1,5 +1,5 @@
-import { BASE_URL } from "@/config";
-import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import { handleSingleProductApi } from "@/imports/allproducts/apis/api/api";
+import { withData } from "@/imports/allproducts/apis/context/data.context";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 
@@ -25,21 +25,11 @@ const productView = ({ pageProps }) => {
 productView.getInitialProps = async (ctx) => {
   const { id } = ctx.query;
   try {
-    const response = await fetch(
-      `${BASE_URL}/product/product?productId=${id}`,
-      {
-        method: "GET",
-      }
-    );
-    if (response.ok) {
-      const responseData = await response.json();
-      return { pageProps: responseData.product };
-    } else {
-      throw new Error("API request failed");
-    }
+    const response = await handleSingleProductApi(id);
+    return { pageProps: response.product };
   } catch (error) {
     console.error("Error fetching product:", error);
-    return { pageProps: null };
+    return { pageProps: [] };
   }
 };
 

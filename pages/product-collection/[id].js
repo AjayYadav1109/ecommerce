@@ -1,5 +1,8 @@
-import { BASE_URL } from "@/config";
-import { withData } from "@/imports/allproducts/ui/components/api/context/data.context";
+import {
+  handleFilterApi,
+  handleProductApi,
+} from "@/imports/allproducts/apis/api/api";
+import { withData } from "@/imports/allproducts/apis/context/data.context";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -35,31 +38,19 @@ productCollection.getInitialProps = async (ctx) => {
   const cid = params.get("cid");
   const sid = params.get("sid");
 
-  const productResponse = await fetch(
-    `${BASE_URL}/product/products?subcategoryId=${sid}`,
-    {
-      method: "GET",
-    }
-  ).then((res) => res.json());
-
-  const filterResponse = await fetch(
-    `${BASE_URL}/subcategory/subcategories?categoryId=${cid}`,
-    {
-      method: "GET",
-    }
-  ).then((res) => res.json());
-
-  return Promise.all([productResponse, filterResponse])
-    .then(([productData, filterData]) => {
-      return {
-        productData: productData.subcategories,
-        filterData: filterData.category.subcategories,
-      };
-    })
-    .catch((error) => {
-      console.log("Error fetching data:", error);
-      return { productData: null, filterData: null };
-    });
+  try {
+    const res = await Promise.all([
+      handleProductApi(sid),
+      handleFilterApi(cid),
+    ]);
+    return {
+      productData: res[0].subcategories,
+      filterData: res[1].category.subcategories,
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return { productData: [], filterData: [] };
+  }
 };
 
 export default productCollection;
