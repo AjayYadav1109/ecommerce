@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
 import Profile from "@/assets/Profile";
@@ -8,10 +8,8 @@ import { withData } from "@/imports/allproducts/apis/context/data.context";
 import { useRouter } from "next/router";
 import nookies, { destroyCookie } from "nookies";
 import Loader from "@/imports/allproducts/atoms/Loader";
-import {
-  handleCategoryApi,
-  handleFilterApi,
-} from "@/imports/allproducts/apis/api/api";
+import { handleFilterApi } from "@/imports/allproducts/apis/api/api";
+import Flex from "@/imports/allproducts/atoms/Flex";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -57,15 +55,16 @@ const Header = () => {
 
   return (
     <>
-      <Container>
-        <Wrapper>
+      <Container alignItems="center" justifyContent="center" fullWidth>
+        <Wrapper alignItems="center" justifyContent="center" fullWidth>
           <Logo>SHOP.CO</Logo>
           {allCategory?.map((category) => (
             <Icon
+              alignItems="center"
               onMouseEnter={getSubcategory(category._id)}
               key={category._id}
             >
-              <Shop>{category.category_name}</Shop>
+              <Shop alignItems="center">{category.category_name}</Shop>
               <Dropdown>
                 {isLoading ? (
                   <Loader />
@@ -83,8 +82,8 @@ const Header = () => {
               </Dropdown>
             </Icon>
           ))}
-          <Search>
-            <WrapSearch>
+          <Search fullWidth>
+            <WrapSearch fullWidth>
               <Svg>
                 <SearchSvg />
               </Svg>
@@ -96,7 +95,7 @@ const Header = () => {
               />
             </WrapSearch>
           </Search>
-          <Carts>
+          <Carts alignItems="center">
             <CartSvg onClick={cartRouteHandler}>
               <Cart />
               {token && <Quantity>{quantity}</Quantity>}
@@ -106,7 +105,11 @@ const Header = () => {
                 <Profile />
               </ProfileSvg>
             ) : (
-              <LargeSize onClick={logoutHandler}>
+              <LargeSize
+                onClick={logoutHandler}
+                justifyContent="center"
+                alignItems="center"
+              >
                 <Large>Logout</Large>
               </LargeSize>
             )}
@@ -120,6 +123,8 @@ const Header = () => {
 
 export default Header;
 
+const BodyWrapper = styled(Flex)``;
+
 const Dropdown = styled.div`
   top: 96px;
   background-color: #fff;
@@ -131,12 +136,8 @@ const Dropdown = styled.div`
   position: absolute;
 `;
 
-const Container = styled.div`
-  width: 100%;
+const Container = styled(Flex)`
   background: #fff;
-  align-items: center;
-  justify-content: center;
-  display: flex;
   position: relative;
   z-index: 2;
 `;
@@ -157,13 +158,10 @@ const Quantity = styled.div`
   position: absolute;
 `;
 
-const LargeSize = styled.div`
+const LargeSize = styled(Flex)`
   border-radius: 62px;
   background: #000;
-  display: flex;
   padding: 6px 12px;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
   &:hover {
     background-color: #454545;
@@ -187,14 +185,10 @@ const Sub = styled.div`
     font-weight: 700;
   }
 `;
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
+const Wrapper = styled(Flex)`
   height: 96px;
   gap: 40px;
   max-width: 1240px;
-  width: 100%;
-  justify-content: center;
 `;
 
 const Logo = styled.div`
@@ -204,10 +198,8 @@ const Logo = styled.div`
   color: #000;
 `;
 
-const Icon = styled.div`
+const Icon = styled(Flex)`
   color: #000;
-  display: flex;
-  align-items: center;
   height: 96px;
   font-family: "Satoshi";
   font-weight: 600;
@@ -221,19 +213,15 @@ const Icon = styled.div`
   }
 `;
 
-const Search = styled.div`
-  display: flex;
+const Search = styled(Flex)`
   color: #000;
   max-width: 577px;
-  width: 100%;
   border-radius: 62px;
   background: #f0f0f0;
 `;
 
-const Carts = styled.div`
+const Carts = styled(Flex)`
   color: #000;
-  display: flex;
-  align-items: center;
   gap: 14px;
 `;
 
@@ -255,17 +243,13 @@ const Svg = styled.div`
   height: 24px;
 `;
 
-const WrapSearch = styled.div`
-  display: flex;
+const WrapSearch = styled(Flex)`
   padding: 12px 16px;
   gap: 12px;
-  width: 100%;
 `;
 
-const Shop = styled.div`
-  display: flex;
+const Shop = styled(Flex)`
   gap: 4px;
-  align-items: center;
   cursor: pointer;
 `;
 

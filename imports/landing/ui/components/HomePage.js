@@ -11,9 +11,9 @@ const HomePage = () => {
           <Paras>
             <BigPara>
               <BoldPara>FIND CLOTHES THAT MATCHES YOUR STYLE</BoldPara>
-              <Big>
+              {/* <Big>
                 <BigStar />
-              </Big>
+              </Big> */}
             </BigPara>
             <SmallPara>
               <Para>
@@ -21,9 +21,9 @@ const HomePage = () => {
                 garments, designed to bring out your individuality and cater to
                 your sense of style.
               </Para>
-              <Small>
+              {/* <Small>
                 <Star />
-              </Small>
+              </Small> */}
             </SmallPara>
           </Paras>
           <Div>

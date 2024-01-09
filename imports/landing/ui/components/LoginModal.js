@@ -2,13 +2,14 @@ import {
   handleLoginApi,
   handleRegisterApi,
 } from "@/imports/allproducts/apis/api/api";
+import Flex from "@/imports/allproducts/atoms/Flex";
 import { useRouter } from "next/router";
 import { setCookie } from "nookies";
 import React, { useEffect, useRef, useState } from "react";
-import styled, { css, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const LoginModal = ({ setShowModal }) => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
   const [showErrorMessage, setShowErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -123,66 +124,69 @@ const LoginModal = ({ setShowModal }) => {
     }
   };
 
+  const handleCtaTrigger = () => {
+    isLogin ? loginHandler() : signUpHandler();
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   const reverseHandler = () => setIsLogin(!isLogin);
 
   return (
-    <Overlay>
-      <ModalContent>
-        <Wrap ref={modalRef}>
-          <DetailsWrap>
-            <ReachedText>{isLogin ? "Login" : "Sign Up"}</ReachedText>
-            <ReachedDisc>
-              {!isLogin && (
-                <InputWrap>
-                  <Label>Name</Label>
-                  <Input
-                    type="text"
-                    name="name"
-                    onChange={HandleChange}
-                    value={formData.name}
-                    autoComplete="off"
-                  />
-                </InputWrap>
-              )}
-              <InputWrap>
-                <Label>Email</Label>
-                <Input
-                  type="email"
-                  name="email"
-                  onChange={HandleChange}
-                  value={formData.email}
-                  autoComplete="off"
-                />
-              </InputWrap>
-              <InputWrap>
-                <Label>Password</Label>
-                <Input
-                  type="password"
-                  name="password"
-                  onChange={HandleChange}
-                  value={formData.password}
-                  autoComplete="off"
-                />
-              </InputWrap>
-            </ReachedDisc>
-            <ButtonWrap>
-              <Button
-                onClick={() => {
-                  isLogin ? loginHandler() : signUpHandler();
-                }}
-              >
-                {isLogin ? "Login" : "SignUp"}
-              </Button>
-              <Button onClick={reverseHandler}>
-                {isLogin
-                  ? "Already Have an account? Login"
-                  : "New User? Sign Up First"}
-              </Button>
-            </ButtonWrap>
-            <SuccessMsg>{showSuccessMessage}</SuccessMsg>
-            <ErrorMsg>{showErrorMessage}</ErrorMsg>
-            {isLoading && <Loading>Loading...</Loading>}
-          </DetailsWrap>
+    <Overlay alignItems="center" justifyContent="center">
+      <ModalContent alignItems="center" justifyContent="center" fullWidth>
+        <Wrap ref={modalRef} direction="column" alignItems="center">
+          {isLogin ? <Title>Login</Title> : <Title>Sign Up</Title>}
+          <InputGroup direction="column" fullWidth>
+            {!isLogin && (
+              <Input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={formData.name}
+                onChange={HandleChange}
+                autoComplete="off"
+              />
+            )}
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={HandleChange}
+              autoComplete="off"
+            />
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={HandleChange}
+              autoComplete="off"
+            />
+            <AccountText>
+              {isLogin ? "Don't have an account?" : "Already have an account?"}
+              <span onClick={reverseHandler}>
+                {isLogin ? "SignUp" : "Login"}
+              </span>
+            </AccountText>
+          </InputGroup>
+          {showSuccessMessage && <SuccessMsg>{showSuccessMessage}</SuccessMsg>}
+          {showErrorMessage && <ErrorMsg>{showErrorMessage}</ErrorMsg>}
+          <BtnField fullWidth>
+            <FieldButton
+              type="button"
+              onClick={handleCtaTrigger}
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Submit"}
+            </FieldButton>
+            <FieldButton type="button" onClick={handleCloseModal}>
+              Cancel
+            </FieldButton>
+          </BtnField>
         </Wrap>
       </ModalContent>
     </Overlay>
@@ -202,124 +206,93 @@ const slideDown = keyframes`
   }
 `;
 
-const Button = styled.button`
-  cursor: pointer;
-  border: none;
-  padding: 10px;
-  border-radius: 7px;
-  font-size: 18px;
-  color: white;
-  font-family: "Satoshi";
-  font-weight: 500;
-  background-color: rgb(36, 115, 174);
-  &:hover {
-    background: rgb(27, 94, 145);
-  }
-  ${({ light }) =>
-    light &&
-    css`
-      background-color: #8c8c8c;
-      color: white;
-      &:hover {
-        background: #757575;
-      }
-    `}
-  @media (max-width: 800px) {
-    width: 100%;
-  }
-`;
-
 const SuccessMsg = styled.div`
-  color: green;
+  color: #f00;
+  text-align: center;
   font-size: 20px;
 `;
 
-const ErrorMsg = styled.div`
+const ErrorMsg = styled.span`
+  font-size: 15px;
   color: red;
-  font-size: 20px;
 `;
 
-const Loading = styled.div`
-  font-size: 20px;
-  color: blue;
-`;
-
-const InputWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Label = styled.div`
-  color: white;
-  font-family: "Satoshi";
-  font-weight: 500;
-`;
-
-const Input = styled.input`
-  padding: 4px;
-  border-radius: 4px;
-`;
-
-const ButtonWrap = styled.div`
-  display: flex;
+const FieldButton = styled.button`
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  background-color: #000;
+  color: #fff;
   width: 100%;
-  justify-content: center;
+  padding: 10px;
+  line-height: 22px;
+  border-radius: 20px;
+  font-size: 18px;
+  border: none;
+
+  &:hover {
+    background-color: #454545;
+  }
+`;
+
+const BtnField = styled(Flex)`
   gap: 10px;
 `;
 
-const ReachedDisc = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+const AccountText = styled(Flex)`
+  font-size: 15px;
+
+  span {
+    color: #000;
+    font-weight: 600;
+    cursor: pointer;
+  }
 `;
 
-const ReachedText = styled.div`
-  font-family: "GilroySemiBold";
-  color: rgba(229, 224, 216, 0.85);
-  font-size: 28px;
-  line-height: 34px;
-  text-align: center;
-`;
-
-const DetailsWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 700px;
+const Input = styled.input`
+  padding: 15px;
+  border-radius: 8px;
+  background: #eaeaea;
+  color: #14141f;
+  border: 1px solid #e3e3e4;
   width: 100%;
-  background-color: #323232;
-  padding: 10px;
-  border-radius: 5px;
+  font-size: 15px;
+
+  &:focus {
+    outline-color: #c9cdff;
+  }
+
+  &::placeholder {
+    color: #adadad;
+  }
 `;
 
-const Wrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
-  max-width: 900px;
+const InputGroup = styled(Flex)`
+  gap: 10px;
+`;
+
+const Title = styled.h3`
+  font-size: 30px;
+  color: #000;
+`;
+
+const Wrap = styled(Flex)`
+  gap: 20px;
   width: 90%;
-  background-color: #323232;
-  padding: 30px;
+  max-width: 450px;
+  background: #fff;
+  padding: 40px 50px 60px;
   border-radius: 5px;
   animation: ${slideDown} 0.4s ease-in-out;
 `;
 
-const ModalContent = styled.div`
-  display: flex;
+const ModalContent = styled(Flex)`
   position: relative;
   height: 100%;
   max-width: 100%;
   max-height: 100%;
-  align-items: center;
-  justify-content: center;
 `;
 
-const Overlay = styled.div`
-  display: flex;
+const Overlay = styled(Flex)`
   position: fixed;
-  justify-content: center;
-  align-items: center;
   top: 0;
   left: 0;
   width: 100%;
