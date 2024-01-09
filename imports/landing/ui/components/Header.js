@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
 import Profile from "@/assets/Profile";
@@ -8,7 +8,10 @@ import { withData } from "@/imports/allproducts/apis/context/data.context";
 import { useRouter } from "next/router";
 import nookies, { destroyCookie } from "nookies";
 import Loader from "@/imports/allproducts/atoms/Loader";
-import { handleFilterApi } from "@/imports/allproducts/apis/api/api";
+import {
+  handleCategoryApi,
+  handleFilterApi,
+} from "@/imports/allproducts/apis/api/api";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -22,6 +25,7 @@ const Header = () => {
   const searchHandler = (e) => {
     setSearch(e.target.value);
   };
+
   const logoutHandler = () => {
     destroyCookie({}, "token", { path: "/" });
     router.push("/");

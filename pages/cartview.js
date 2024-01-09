@@ -31,7 +31,7 @@ cartView.getInitialProps = async (ctx) => {
     const responseData = await handleCartApi(token);
     return { pageProps: responseData.cartItems };
   } catch (error) {
-    console.log("Error fetching cart:", error);
+    console.error("Error fetching cart:", error);
     return { pageProps: [] };
   }
 };

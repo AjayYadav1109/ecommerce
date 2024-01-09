@@ -1,23 +1,8 @@
 import ArrowSvg from "@/assets/ArrowSvg";
-import BlackSvg from "@/assets/ColorSvg/BlackSvg";
-import BlueSvg from "@/assets/ColorSvg/BlueSvg";
-import IndigoSvg from "@/assets/ColorSvg/IndigoSvg";
-import LightGreenSvg from "@/assets/ColorSvg/LightGreenSvg";
-import LightPurpleSvg from "@/assets/ColorSvg/LightPurpleSvg";
-import OrangeSvg from "@/assets/ColorSvg/OrangeSvg";
-import PinkSvg from "@/assets/ColorSvg/PinkSvg";
-import RedSvg from "@/assets/ColorSvg/RedSvg";
-import WhiteSvg from "@/assets/ColorSvg/WhiteSvg";
-import YellowSvg from "@/assets/ColorSvg/YellowSvg";
-import FilterSvg from "@/assets/FilterSvg";
-import UpperArrowSvg from "@/assets/UpperArrowSvg";
-import CorrectSvg from "@/assets/ColorSvg/Correct";
 import styled, { css } from "styled-components";
 import DropdownSvg from "@/assets/DropdownSvg";
 import StarSvg from "@/assets/StarSvg";
 import { useRouter } from "next/router";
-import ReactSlider from "react-slider";
-import { useEffect } from "react";
 import { withData } from "../../apis/context/data.context";
 
 const MultipleProductsTwo = [
@@ -92,20 +77,6 @@ const AllTypeProducts = () => {
     state: { product, subcategory, selectedSubcategory },
     handleDataState,
   } = withData();
-  // const [toggle, setToggle] = useState({
-  //   first: false,
-  //   second: false,
-  //   third: true,
-  // });
-
-  // const toggleHandler = (i) => {
-  //   setToggle(!toggle);
-  // };
-
-  // useEffect(() => {
-  //   getProducts(id);
-  // }, [id]);
-
   const HandleProduct = (id) => () => router.push(`/products/${id}`);
 
   const filterHandler = (cid, sid) => () => {
@@ -142,82 +113,17 @@ const AllTypeProducts = () => {
               ))}
             </Varities>
             <Margin />
-            <PriceSvg>
-              <PriceContent>
-                <Price>Price</Price>
-                <UpperArrowSvg />
-              </PriceContent>
-              <SliderWrap>
-                <ReactSlider
-                  className="horizontal-slider"
-                  thumbClassName="example-thumb"
-                  trackClassName="example-track"
-                  defaultValue={[50, 250]}
-                  ariaLabel={["Lower thumb", "Upper thumb"]}
-                  ariaValuetext={(state) => `Thumb value ${state.valueNow}`}
-                  renderThumb={(props, state) => (
-                    <div {...props}>{state.valueNow}</div>
-                  )}
-                  pearling
-                  minDistance={10}
-                  min={50}
-                  max={250}
-                />
-              </SliderWrap>
-            </PriceSvg>
-            <Margins />
-            <PriceContent>
-              <Price>Colors</Price>
-              <UpperArrowSvg />
-            </PriceContent>
-            <ColorsSvg>
-              <FirstRowColor>
-                <LightGreenSvg />
-                <RedSvg />
-                <YellowSvg />
-                <OrangeSvg />
-                <BlueSvg />
-              </FirstRowColor>
-              <SecondRowColor>
-                <IndigoCorrect>
-                  <Indigo>
-                    <IndigoSvg />
-                  </Indigo>
-                  <Correct>
-                    <CorrectSvg />
-                  </Correct>
-                </IndigoCorrect>
-                <LightPurpleSvg />
-                <PinkSvg />
-                <WhiteSvg />
-                <BlackSvg />
-              </SecondRowColor>
-            </ColorsSvg>
-            <Margin />
             <PriceContent>
               <Price>Size</Price>
-              <UpperArrowSvg />
             </PriceContent>
             <ButtonList>
-              <BtnBack
-              // toggle={toggle.first}
-              // selected={"first"}
-              // onClick={() => toggleHandler("first")}
-              >
+              <BtnBack>
                 <Size>XX-Small</Size>
               </BtnBack>
-              <BtnBack
-              // toggle={toggle.second}
-              // selected={"second"}
-              // onClick={() => toggleHandler("second")}
-              >
+              <BtnBack>
                 <Size>X-Small</Size>
               </BtnBack>
-              <BtnBack
-              // toggle={toggle.third}
-              // selected={"third"}
-              // onClick={() => toggleHandler("third")}
-              >
+              <BtnBack>
                 <Size>Small</Size>
               </BtnBack>
               <BtnBack>

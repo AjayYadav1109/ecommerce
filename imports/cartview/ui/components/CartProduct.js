@@ -11,7 +11,6 @@ import StarSvg from "@/assets/StarSvg";
 import nookies from "nookies";
 import {
   handleAddToCartApi,
-  handleCartApi,
   handleDeleteFromCartApi,
   handleRemoveFromCartApi,
 } from "@/imports/allproducts/apis/api/api";
@@ -23,20 +22,12 @@ const CartProduct = () => {
     handleDataState,
   } = withData();
   const { token } = nookies.get({});
-  console.log("allCart", allCart);
-  const getCart = async (token) => {
-    try {
-      const responseData = await handleCartApi(token);
-      handleDataState("allCart", responseData.cartItems);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const incrementHandler = (id) => async () => {
     try {
       const response = await handleAddToCartApi(id, token);
-      getCart(token);
+      const quantity = response?.cartItem?.quantity;
+      updateCartItemQuantity(id, quantity);
     } catch (error) {
       console.error(error);
     }
@@ -45,7 +36,9 @@ const CartProduct = () => {
   const decrementHandler = (id) => async () => {
     try {
       const response = await handleRemoveFromCartApi(id, token);
-      getCart(token);
+      const productId = response?.cartItem?.productId;
+      const quantity = response?.cartItem?.quantity;
+      updateCartItemQuantity(productId, quantity);
     } catch (error) {
       console.error(error);
     }
@@ -54,10 +47,25 @@ const CartProduct = () => {
   const removeHandler = (id) => async () => {
     try {
       const response = await handleDeleteFromCartApi(id, token);
-      getCart(token);
+      updateCartItem(id);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const updateCartItemQuantity = (id, newQuantity) => {
+    const updatedCart = allCart.map((item) => {
+      if (item?.productId?._id === id) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    handleDataState("allCart", updatedCart);
+  };
+
+  const updateCartItem = (id) => {
+    const updatedCart = allCart.filter((item) => item._id !== id);
+    handleDataState("allCart", updatedCart);
   };
 
   const homeHandler = () => router.push("/");

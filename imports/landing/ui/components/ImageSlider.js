@@ -66,8 +66,9 @@ const ImageSlider = () => {
           </Arrow>
         </ButtonContainer>
         <Slider ref={(c) => (slider.current = c)} {...settings}>
-          <ImageContent />
-          <ImageContent />
+          {[...Array(2)].map((_, i) => (
+            <ImageContent key={i} />
+          ))}
         </Slider>
       </Wrapper>
     </Container>

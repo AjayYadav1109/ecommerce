@@ -16,7 +16,6 @@ const Header = dynamic(() => import("@/imports/landing/ui/components/Header"), {
 const LandingHomePage = ({ categoryData, cartData }) => {
   const { handleDataState } = withData();
   const { token } = nookies.get({});
-
   useEffect(() => {
     handleDataState("allCategory", categoryData);
   }, []);
@@ -37,11 +36,19 @@ const LandingHomePage = ({ categoryData, cartData }) => {
 LandingHomePage.getInitialProps = async (ctx) => {
   const { token } = parseCookies(ctx);
   try {
-    const res = await Promise.all([handleCategoryApi(), handleCartApi(token)]);
-    return {
-      categoryData: res[0].category,
-      cartData: res[1].cartItems,
-    };
+    if (!token) {
+      const res = await handleCategoryApi();
+      return { categoryData: res.category };
+    } else {
+      const res = await Promise.all([
+        handleCategoryApi(),
+        handleCartApi(token),
+      ]);
+      return {
+        categoryData: res[0].category,
+        cartData: res[1].cartItems,
+      };
+    }
   } catch (error) {
     console.error("Error fetching data:", error);
     return { categoryData: [], cartData: [] };
