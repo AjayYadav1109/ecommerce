@@ -29,8 +29,8 @@ const LandingHomePage = ({ categoryData, cartData }) => {
   return (
     <Fragment>
       <Header />
-      {/* <LandingPage /> */}
-      {/* <Footer /> */}
+      <LandingPage />
+      <Footer />
     </Fragment>
   );
 };
