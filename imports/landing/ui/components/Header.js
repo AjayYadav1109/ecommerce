@@ -4,20 +4,22 @@ import SearchSvg from "@/assets/SearchSvg";
 import Profile from "@/assets/Profile";
 import Cart from "@/assets/Cart";
 import LoginModal from "./LoginModal";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
 import { useRouter } from "next/router";
 import nookies, { destroyCookie } from "nookies";
-import Loader from "@/imports/allproducts/atoms/Loader";
-import { handleFilterApi } from "@/imports/allproducts/apis/api/api";
 import Flex from "@/imports/allproducts/atoms/Flex";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchSubcategories,
+  getSubcategory,
+} from "@/imports/allproducts/apis/slice/categorySlice";
 
 const Header = () => {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const {
-    state: { allCategory, subcategory, allCart, isLoading },
-    handleDataState,
-  } = withData();
+  const dispatch = useDispatch();
+  const allCategory = useSelector((store) => store.category.allCategory);
+  const allCart = useSelector((store) => store.cart.allCart);
+  const subcategory = useSelector((store) => store.category.subcategory);
   const router = useRouter();
   const { token } = nookies.get({});
   const searchHandler = (e) => {
@@ -29,19 +31,10 @@ const Header = () => {
     router.push("/");
   };
 
-  const getSubcategory = (id) => async () => {
-    handleDataState("isLoading", true);
-    try {
-      if (subcategory[0]?.categoryId !== id) {
-        const response = await handleFilterApi(id);
-        const subcategories = response?.category?.subcategories;
-        handleDataState("subcategory", subcategories);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    handleDataState("isLoading", false);
+  const getAllSubcategory = (id) => async () => {
+    dispatch(fetchSubcategories({ id, subcategory, dispatch, getSubcategory }));
   };
+
   const quantity = allCart?.reduce((acc, item) => {
     return acc + item.quantity;
   }, 0);
@@ -61,24 +54,18 @@ const Header = () => {
           {allCategory?.map((category) => (
             <Icon
               alignItems="center"
-              onMouseEnter={getSubcategory(category._id)}
+              onMouseEnter={getAllSubcategory(category._id)}
               key={category._id}
             >
               <Shop alignItems="center">{category.category_name}</Shop>
               <Dropdown>
-                {isLoading ? (
-                  <Loader />
-                ) : (
-                  <>
-                    {subcategory.map((sub) => (
-                      <AllSub key={sub._id}>
-                        <Sub onClick={productHandler(sub.categoryId, sub._id)}>
-                          {sub.subcategory_name}
-                        </Sub>
-                      </AllSub>
-                    ))}
-                  </>
-                )}
+                {subcategory.map((sub) => (
+                  <AllSub key={sub._id}>
+                    <Sub onClick={productHandler(sub.categoryId, sub._id)}>
+                      {sub.subcategory_name}
+                    </Sub>
+                  </AllSub>
+                ))}
               </Dropdown>
             </Icon>
           ))}

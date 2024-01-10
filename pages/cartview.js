@@ -1,8 +1,9 @@
 import { handleCartApi } from "@/imports/allproducts/apis/api/api";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
+import { getAllCart } from "@/imports/allproducts/apis/slice/cartSlice";
 import dynamic from "next/dynamic";
 import { parseCookies } from "nookies";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const CartProduct = dynamic(
   () => import("@/imports/cartview/ui/components/CartProduct"),
@@ -12,10 +13,10 @@ const CartProduct = dynamic(
 );
 
 const cartView = ({ pageProps }) => {
-  const { handleDataState } = withData();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    handleDataState("allCart", pageProps);
+    dispatch(getAllCart(pageProps));
   }, []);
 
   return (

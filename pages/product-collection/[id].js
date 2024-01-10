@@ -2,10 +2,15 @@ import {
   handleFilterApi,
   handleProductApi,
 } from "@/imports/allproducts/apis/api/api";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
+import {
+  getSelectedSubcategory,
+  getSubcategory,
+} from "@/imports/allproducts/apis/slice/categorySlice";
+import { getProduct } from "@/imports/allproducts/apis/slice/productSlice";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const ProductInfo = dynamic(
   () => import("@/imports/allproducts/ui/components/pages/ProductInfo"),
@@ -17,11 +22,12 @@ const ProductInfo = dynamic(
 const productCollection = ({ productData, filterData }) => {
   const router = useRouter();
   const { id } = router.query;
-  const { handleDataState } = withData();
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    handleDataState("subcategory", filterData);
-    handleDataState("product", productData.products);
-    handleDataState("selectedSubcategory", productData);
+    dispatch(getSubcategory(filterData));
+    dispatch(getProduct(productData.products));
+    dispatch(getSelectedSubcategory(productData));
   }, [id]);
 
   return (

@@ -7,26 +7,20 @@ import PurpleSvg from "@/assets/ColorSvg/PurpleSvg";
 import CorrectSvg from "@/assets/ColorSvg/Correct";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
 import nookies from "nookies";
-import { handleAddToCartApi } from "@/imports/allproducts/apis/api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "@/imports/allproducts/apis/slice/cartSlice";
 
 const ProductsDetails = () => {
-  const {
-    state: { singleProduct },
-  } = withData();
   const { token } = nookies.get({});
   const router = useRouter();
   const { id } = router.query;
+  const singleProduct = useSelector((store) => store.product.singleProduct);
+  const dispatch = useDispatch();
   const [showCart, setShowCart] = useState(false);
 
   const cartHandler = (id) => async () => {
-    try {
-      const response = await handleAddToCartApi(id, token);
-      setShowCart(true);
-    } catch (error) {
-      console.error(error);
-    }
+    dispatch(addToCart({ id, token, setShowCart }));
   };
 
   const checkoutHandler = () => router.push("/cartview");

@@ -5,52 +5,33 @@ import DecrementSvg from "@/assets/DecrementSvg";
 import IncrementSvg from "@/assets/IncrementSvg";
 import FrameSvg from "@/assets/FrameSvg";
 import ArrowBoldSvg from "@/assets/ArrowBoldSvg";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
 import { useRouter } from "next/router";
 import StarSvg from "@/assets/StarSvg";
 import nookies from "nookies";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  handleAddToCartApi,
-  handleDeleteFromCartApi,
-  handleRemoveFromCartApi,
-} from "@/imports/allproducts/apis/api/api";
+  cartDecrement,
+  cartDelete,
+  cartIncrement,
+  getAllCart,
+} from "@/imports/allproducts/apis/slice/cartSlice";
 
 const CartProduct = () => {
   const router = useRouter();
-  const {
-    state: { allCart },
-    handleDataState,
-  } = withData();
+  const allCart = useSelector((store) => store.cart.allCart);
   const { token } = nookies.get({});
+  const dispatch = useDispatch();
 
   const incrementHandler = (id) => async () => {
-    try {
-      const response = await handleAddToCartApi(id, token);
-      const quantity = response?.cartItem?.quantity;
-      updateCartItemQuantity(id, quantity);
-    } catch (error) {
-      console.error(error);
-    }
+    dispatch(cartIncrement({ id, token, updateCartItemQuantity }));
   };
 
   const decrementHandler = (id) => async () => {
-    try {
-      const response = await handleRemoveFromCartApi(id, token);
-      const productId = response?.cartItem?.productId;
-      const quantity = response?.cartItem?.quantity;
-      updateCartItemQuantity(productId, quantity);
-    } catch (error) {
-      console.error(error);
-    }
+    dispatch(cartDecrement({ id, token, updateCartItemQuantity }));
   };
 
   const removeHandler = (id) => async () => {
-    try {
-      const response = await handleDeleteFromCartApi(id, token);
-      updateCartItem(id);
-    } catch (error) {
-      console.error(error);
-    }
+    dispatch(cartDelete({ id, token, updateCartItem }));
   };
 
   const updateCartItemQuantity = (id, newQuantity) => {
@@ -60,12 +41,12 @@ const CartProduct = () => {
       }
       return item;
     });
-    handleDataState("allCart", updatedCart);
+    dispatch(getAllCart(updatedCart));
   };
 
   const updateCartItem = (id) => {
     const updatedCart = allCart.filter((item) => item._id !== id);
-    handleDataState("allCart", updatedCart);
+    dispatch(getAllCart(updatedCart));
   };
 
   const homeHandler = () => router.push("/");

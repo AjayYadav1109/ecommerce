@@ -1,7 +1,8 @@
 import { handleSingleProductApi } from "@/imports/allproducts/apis/api/api";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
+import { getSingleProduct } from "@/imports/allproducts/apis/slice/productSlice";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const ProductAllDetails = dynamic(
   () => import("@/imports/productsview/ui/components/pages/ProductAllDetails"),
@@ -11,10 +12,12 @@ const ProductAllDetails = dynamic(
 );
 
 const productView = ({ pageProps }) => {
-  const { handleDataState } = withData();
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    handleDataState("singleProduct", pageProps);
+    dispatch(getSingleProduct(pageProps));
   }, []);
+
   return (
     <>
       <ProductAllDetails />

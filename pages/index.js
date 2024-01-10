@@ -2,26 +2,28 @@ import Footer from "@/imports/landing/ui/components/Footer";
 import dynamic from "next/dynamic";
 import LandingPage from "@/imports/landing/ui/pages/Landing";
 import { Fragment, useEffect } from "react";
-import { withData } from "@/imports/allproducts/apis/context/data.context";
 import nookies, { parseCookies } from "nookies";
 import {
   handleCartApi,
   handleCategoryApi,
 } from "@/imports/allproducts/apis/api/api";
+import { useDispatch } from "react-redux";
+import { getAllCategory } from "@/imports/allproducts/apis/slice/categorySlice";
+import { getAllCart } from "@/imports/allproducts/apis/slice/cartSlice";
 
 const Header = dynamic(() => import("@/imports/landing/ui/components/Header"), {
   ssr: false,
 });
 
 const LandingHomePage = ({ categoryData, cartData }) => {
-  const { handleDataState } = withData();
   const { token } = nookies.get({});
+  const dispatch = useDispatch();
   useEffect(() => {
-    handleDataState("allCategory", categoryData);
+    dispatch(getAllCategory(categoryData));
   }, []);
 
   useEffect(() => {
-    handleDataState("allCart", cartData);
+    dispatch(getAllCart(cartData));
   }, [token]);
 
   return (

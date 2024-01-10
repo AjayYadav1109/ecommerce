@@ -3,7 +3,8 @@ import styled, { css } from "styled-components";
 import DropdownSvg from "@/assets/DropdownSvg";
 import StarSvg from "@/assets/StarSvg";
 import { useRouter } from "next/router";
-import { withData } from "../../apis/context/data.context";
+import { useDispatch, useSelector } from "react-redux";
+import { getSelectedSubcategory } from "../../apis/slice/categorySlice";
 
 const MultipleProductsTwo = [
   {
@@ -73,14 +74,16 @@ const MultipleProductsThree = [
 
 const AllTypeProducts = () => {
   const router = useRouter();
-  const {
-    state: { product, subcategory, selectedSubcategory },
-    handleDataState,
-  } = withData();
+  const dispatch = useDispatch();
+  const subcategory = useSelector((store) => store.category.subcategory);
+  const product = useSelector((store) => store.product.products);
+  const selectedSubcategory = useSelector(
+    (store) => store.category.selectedSubcategory
+  );
   const HandleProduct = (id) => () => router.push(`/products/${id}`);
 
   const filterHandler = (cid, sid) => () => {
-    handleDataState("selectedSubcategory", sid);
+    dispatch(getSelectedSubcategory(sid));
     router.push(`/product-collection/cid=${cid}&sid=${sid}`);
   };
 
