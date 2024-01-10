@@ -12,15 +12,21 @@ import {
   fetchSubcategories,
   getSubcategory,
 } from "@/imports/allproducts/apis/slice/categorySlice";
+import useWindowSize from "../hooks/useWindowSize";
+import CloseSlider from "@/assets/CloseSlider";
+import OpenSlider from "@/assets/OpenSlider";
+import Sidebar from "./Sidebar";
 
 const Header = () => {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showSideBar, setShowSideBar] = useState(false);
   const dispatch = useDispatch();
   const allCategory = useSelector((store) => store.category.allCategory);
   const allCart = useSelector((store) => store.cart.allCart);
   const subcategory = useSelector((store) => store.category.subcategory);
   const router = useRouter();
+  const { width } = useWindowSize();
   const { token } = nookies.get({});
   const searchHandler = (e) => {
     setSearch(e.target.value);
@@ -45,62 +51,86 @@ const Header = () => {
   const cartRouteHandler = () => router.push("cartview");
 
   const profileHandler = () => setShowModal(true);
+  const toggleSidebar = () => setShowSideBar(!showSideBar);
+
+  const isDesktop = width > 950;
 
   return (
     <>
       <Container alignItems="center" justifyContent="center" fullWidth>
-        <Wrapper alignItems="center" justifyContent="center" fullWidth>
+        <Wrapper alignItems="center" justifyContent="space-between" fullWidth>
           <Logo>SHOP.CO</Logo>
-          {allCategory?.map((category) => (
-            <Icon
-              alignItems="center"
-              onMouseEnter={getAllSubcategory(category._id)}
-              key={category._id}
-            >
-              <Shop alignItems="center">{category.category_name}</Shop>
-              <Dropdown>
-                {subcategory.map((sub) => (
-                  <AllSub key={sub._id}>
-                    <Sub onClick={productHandler(sub.categoryId, sub._id)}>
-                      {sub.subcategory_name}
-                    </Sub>
-                  </AllSub>
-                ))}
-              </Dropdown>
-            </Icon>
-          ))}
-          <Search fullWidth>
-            <WrapSearch fullWidth>
-              <Svg>
-                <SearchSvg />
-              </Svg>
-              <Input
-                type="text"
-                placeholder="Search for products..."
-                onChange={searchHandler}
-                value={search}
-              />
-            </WrapSearch>
-          </Search>
-          <Carts alignItems="center">
-            <CartSvg onClick={cartRouteHandler}>
-              <Cart />
-              {token && <Quantity>{quantity}</Quantity>}
-            </CartSvg>
-            {!token ? (
-              <ProfileSvg onClick={profileHandler}>
-                <Profile />
-              </ProfileSvg>
-            ) : (
-              <LargeSize
-                onClick={logoutHandler}
-                justifyContent="center"
+          <RightSection
+            alignItems="center"
+            justifyContent="space-between"
+            fullWidth
+          >
+            {isDesktop && (
+              <NavLink
                 alignItems="center"
+                justifyContent="space-evenly"
+                fullWidth
               >
-                <Large>Logout</Large>
-              </LargeSize>
+                {allCategory?.map((category) => (
+                  <Icon
+                    alignItems="center"
+                    onMouseEnter={getAllSubcategory(category._id)}
+                    key={category._id}
+                  >
+                    <Shop alignItems="center">{category.category_name}</Shop>
+                    <Dropdown>
+                      {subcategory.map((sub) => (
+                        <AllSub key={sub._id}>
+                          <Sub
+                            onClick={productHandler(sub.categoryId, sub._id)}
+                          >
+                            {sub.subcategory_name}
+                          </Sub>
+                        </AllSub>
+                      ))}
+                    </Dropdown>
+                  </Icon>
+                ))}
+              </NavLink>
             )}
-          </Carts>
+
+            <Search fullWidth>
+              <WrapSearch fullWidth>
+                <Svg>
+                  <SearchSvg />
+                </Svg>
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  onChange={searchHandler}
+                  value={search}
+                />
+              </WrapSearch>
+            </Search>
+            <Carts alignItems="center">
+              <CartSvg onClick={cartRouteHandler}>
+                <Cart />
+                {token && <Quantity>{quantity}</Quantity>}
+              </CartSvg>
+              {!token ? (
+                <ProfileSvg onClick={profileHandler}>
+                  <Profile />
+                </ProfileSvg>
+              ) : (
+                <LargeSize
+                  onClick={logoutHandler}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Large>Logout</Large>
+                </LargeSize>
+              )}
+            </Carts>
+            <MobileNavToggle onClick={toggleSidebar}>
+              {showSideBar ? <CloseSlider /> : <OpenSlider />}
+            </MobileNavToggle>
+            {showSideBar && <Sidebar />}
+          </RightSection>
         </Wrapper>
       </Container>
       {showModal && <LoginModal setShowModal={setShowModal} />}
@@ -110,7 +140,30 @@ const Header = () => {
 
 export default Header;
 
-const BodyWrapper = styled(Flex)``;
+const MobileNavToggle = styled.div`
+  display: none;
+
+  svg {
+    cursor: pointer;
+  }
+
+  @media (max-width: 950px) {
+    display: flex;
+    z-index: 99999;
+  }
+`;
+
+const RightSection = styled(Flex)`
+  gap: 15px;
+
+  @media (max-width: 950px) {
+    justify-content: flex-end;
+  }
+`;
+
+const NavLink = styled(Flex)`
+  gap: 15px;
+`;
 
 const Dropdown = styled.div`
   top: 96px;
@@ -125,8 +178,12 @@ const Dropdown = styled.div`
 
 const Container = styled(Flex)`
   background: #fff;
-  position: relative;
-  z-index: 2;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
 `;
 
 const AllSub = styled.div`
@@ -137,8 +194,8 @@ const AllSub = styled.div`
 `;
 
 const Quantity = styled.div`
-  color: white;
-  background-color: green;
+  font-family: "Satoshi";
+  font-weight: 700;
   padding: 2px 4px;
   top: -22px;
   left: 5px;
@@ -173,9 +230,9 @@ const Sub = styled.div`
   }
 `;
 const Wrapper = styled(Flex)`
-  height: 96px;
-  gap: 40px;
+  gap: 35px;
   max-width: 1240px;
+  padding: 10px;
 `;
 
 const Logo = styled.div`
@@ -183,11 +240,13 @@ const Logo = styled.div`
   font-family: "Integral CF";
   font-weight: 700;
   color: #000;
+  cursor: pointer;
+  line-height: 1;
 `;
 
 const Icon = styled(Flex)`
   color: #000;
-  height: 96px;
+  height: 70px;
   font-family: "Satoshi";
   font-weight: 600;
 
@@ -215,7 +274,9 @@ const Carts = styled(Flex)`
 const Input = styled.input`
   border-radius: 62px;
   background: #f0f0f0;
+  padding: 5px;
   width: 100%;
+  min-width: 60px;
   border: transparent;
   color: #000;
   font-family: "Satoshi";
@@ -231,8 +292,8 @@ const Svg = styled.div`
 `;
 
 const WrapSearch = styled(Flex)`
-  padding: 12px 16px;
-  gap: 12px;
+  padding: 6px 12px;
+  gap: 5px;
 `;
 
 const Shop = styled(Flex)`
