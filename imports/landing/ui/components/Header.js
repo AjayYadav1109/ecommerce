@@ -183,7 +183,6 @@ const Container = styled(Flex)`
   right: 0;
   left: 0;
   z-index: 10;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
 `;
 
 const AllSub = styled.div`

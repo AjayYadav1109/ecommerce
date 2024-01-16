@@ -1,5 +1,3 @@
-import BigStar from "@/assets/BigStar";
-import Star from "@/assets/Star";
 import Link from "next/link";
 import styled from "styled-components";
 
@@ -11,9 +9,6 @@ const HomePage = () => {
           <Paras>
             <BigPara>
               <BoldPara>FIND CLOTHES THAT MATCHES YOUR STYLE</BoldPara>
-              {/* <Big>
-                <BigStar />
-              </Big> */}
             </BigPara>
             <SmallPara>
               <Para>
@@ -21,9 +16,6 @@ const HomePage = () => {
                 garments, designed to bring out your individuality and cater to
                 your sense of style.
               </Para>
-              {/* <Small>
-                <Star />
-              </Small> */}
             </SmallPara>
           </Paras>
           <Div>
@@ -55,6 +47,7 @@ export default HomePage;
 
 const Container = styled.div`
   position: relative;
+  margin-top: 96px;
   width: 100%;
   align-items: center;
   justify-content: center;

@@ -7,10 +7,15 @@ import {
   getSubcategory,
 } from "@/imports/allproducts/apis/slice/categorySlice";
 import { getProduct } from "@/imports/allproducts/apis/slice/productSlice";
+import Footer from "@/imports/landing/ui/components/Footer";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+
+const Header = dynamic(() => import("@/imports/landing/ui/components/Header"), {
+  ssr: false,
+});
 
 const ProductInfo = dynamic(
   () => import("@/imports/allproducts/ui/components/pages/ProductInfo"),
@@ -32,7 +37,9 @@ const productCollection = ({ productData, filterData }) => {
 
   return (
     <>
+      <Header />
       <ProductInfo />
+      <Footer />
     </>
   );
 };

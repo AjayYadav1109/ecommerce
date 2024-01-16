@@ -1,9 +1,14 @@
 import { handleCartApi } from "@/imports/allproducts/apis/api/api";
 import { getAllCart } from "@/imports/allproducts/apis/slice/cartSlice";
+import Footer from "@/imports/landing/ui/components/Footer";
 import dynamic from "next/dynamic";
 import { parseCookies } from "nookies";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+
+const Header = dynamic(() => import("@/imports/landing/ui/components/Header"), {
+  ssr: false,
+});
 
 const CartProduct = dynamic(
   () => import("@/imports/cartview/ui/components/CartProduct"),
@@ -21,7 +26,9 @@ const cartView = ({ pageProps }) => {
 
   return (
     <>
+      <Header />
       <CartProduct />
+      <Footer />
     </>
   );
 };

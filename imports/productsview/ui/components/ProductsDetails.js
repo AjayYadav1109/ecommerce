@@ -133,6 +133,7 @@ export default ProductsDetails;
 
 const Container = styled.div`
   display: flex;
+  margin-top: 96px;
   flex-direction: column;
   justify-content: center;
   align-items: center;

@@ -15,6 +15,7 @@ import {
   cartIncrement,
   getAllCart,
 } from "@/imports/allproducts/apis/slice/cartSlice";
+import Flex from "@/imports/allproducts/atoms/Flex";
 
 const CartProduct = () => {
   const router = useRouter();
@@ -56,7 +57,7 @@ const CartProduct = () => {
       "/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077"
     );
 
-  const subtotal = allCart.reduce((acc, item) => {
+  const subtotal = allCart?.reduce((acc, item) => {
     return acc + item.productId.price * item.quantity;
   }, 0);
 
@@ -65,16 +66,21 @@ const CartProduct = () => {
   const deliveryFee = 15;
   const total = subtotal - discount + deliveryFee;
   return (
-    <Container>
-      <Wrapper>
-        <TopHead>
+    <Container direction="column" justifyContent="center" alignItems="center">
+      <Wrapper direction="column">
+        <TopHead alignItems="center">
           <Home onClick={homeHandler}>Home</Home>
           <ArrowSvg />
           <Cart>Cart</Cart>
         </TopHead>
         <YourCart>YOUR CART</YourCart>
-        {allCart.length === 0 ? (
-          <EmptyBag>
+        {allCart?.length === 0 ? (
+          <EmptyBag
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            fullWidth
+          >
             <Gif
               src="https://cdn.dribbble.com/users/2022451/screenshots/5557745/empty_bag.gif"
               alt="empty-cart"
@@ -86,17 +92,21 @@ const CartProduct = () => {
             </BackBtn>
           </EmptyBag>
         ) : (
-          <MainCart>
-            <ProductCart>
-              {allCart.map((items) => (
-                <MainDetail key={items._id}>
-                  <CartDetail key={items.price}>
+          <MainCart fullWidth>
+            <ProductCart direction="column" fullWidth>
+              {allCart?.map((items) => (
+                <MainDetail key={items._id} direction="column" fullWidth>
+                  <CartDetail key={items.price} fullWidth>
                     <Img
                       src={items.productId.product_img}
                       alt="product-image"
                     />
-                    <Count>
-                      <Delete>
+                    <Count direction="column" fullWidth>
+                      <Delete
+                        justifyContent="space-between"
+                        alignItems="center"
+                        fullWidth
+                      >
                         <Title>{items.productId.product_name}</Title>
                         <Del onClick={removeHandler(items._id)}>
                           <DeleteSvg />
@@ -109,16 +119,18 @@ const CartProduct = () => {
                           )
                         )}
                       </Size>
-                      <PriceSvg>
+                      <PriceSvg
+                        justifyContent="space-between"
+                        alignItems="center"
+                        fullWidth
+                      >
                         <Price>₹{items.productId.price}</Price>
-                        <Btn>
-                          <Decrement
-                            onClick={incrementHandler(items.productId._id)}
-                          >
+                        <Btn justifyContent="center" alignItems="center">
+                          <div onClick={incrementHandler(items.productId._id)}>
                             <DecrementSvg />
-                          </Decrement>
+                          </div>
                           <One>{items.quantity}</One>
-                          <Increment
+                          <div
                             onClick={
                               items.quantity > 1
                                 ? decrementHandler(items._id)
@@ -126,7 +138,7 @@ const CartProduct = () => {
                             }
                           >
                             <IncrementSvg />
-                          </Increment>
+                          </div>
                         </Btn>
                       </PriceSvg>
                     </Count>
@@ -135,37 +147,37 @@ const CartProduct = () => {
                 </MainDetail>
               ))}
             </ProductCart>
-            <Order>
+            <Order direction="column">
               <Summary>Order Summary</Summary>
-              <MainTotal>
-                <TotalContent>
+              <MainTotal direction="column" fullWidth>
+                <Flex justifyContent="space-between" fullWidth>
                   <Total>Subtotal</Total>
                   <SubTotal>₹{subtotal}</SubTotal>
-                </TotalContent>
-                <TotalContent>
+                </Flex>
+                <Flex justifyContent="space-between" fullWidth>
                   <Total>Discount (-20%)</Total>
                   <Discount>-₹{discount}</Discount>
-                </TotalContent>
-                <TotalContent>
+                </Flex>
+                <Flex justifyContent="space-between" fullWidth>
                   <Total>Delivery Fee</Total>
                   <SubTotal>₹{deliveryFee}</SubTotal>
-                </TotalContent>
+                </Flex>
                 <Margin />
-                <TotalContent>
+                <Flex justifyContent="space-between" fullWidth>
                   <Totals>Total</Totals>
                   <FinalTotal>₹{total}</FinalTotal>
-                </TotalContent>
+                </Flex>
               </MainTotal>
-              <BtnList>
-                <Frame>
+              <BtnList fullWidth>
+                <Frame alignItems="flex-start">
                   <FrameSvg />
                   <Promo>Add promo code</Promo>
                 </Frame>
-                <ApplyBack>
+                <ApplyBack justifyContent="center" alignItems="center">
                   <ApplyBtn>Apply</ApplyBtn>
                 </ApplyBack>
               </BtnList>
-              <CheckBtn>
+              <CheckBtn justifyContent="center" alignItems="center" fullWidth>
                 <CheckOut>Go to Checkout</CheckOut>
                 <ArrowBoldSvg />
               </CheckBtn>
@@ -179,21 +191,14 @@ const CartProduct = () => {
 
 export default CartProduct;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+const Container = styled(Flex)`
   background-color: #fbfbfb;
+  margin-top: 96px;
 `;
 
 const Gif = styled.img`
   width: 50%;
 `;
-
-const Increment = styled.div``;
-
-const Decrement = styled.div``;
 
 const Empty = styled.div`
   font-size: 16px;
@@ -201,12 +206,9 @@ const Empty = styled.div`
   font-weight: 500;
 `;
 
-const EmptyBag = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+const EmptyBag = styled(Flex)`
   gap: 20px;
+  margin-bottom: 170px;
 `;
 
 const EmptyCart = styled.div`
@@ -226,12 +228,10 @@ const BackBtn = styled.button`
   font-weight: 700;
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled(Flex)`
   max-width: 1240px;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 90%;
+  gap: 24px;
 `;
 
 const Margin = styled.div`
@@ -240,16 +240,12 @@ const Margin = styled.div`
   width: 100%;
 `;
 
-const MainDetail = styled.div`
-  display: flex;
-  flex-direction: column;
+const MainDetail = styled(Flex)`
   gap: 24px;
 `;
 
-const TopHead = styled.div`
+const TopHead = styled(Flex)`
   margin-top: 24px;
-  display: flex;
-  align-items: center;
   gap: 12px;
 `;
 
@@ -278,46 +274,61 @@ const YourCart = styled.div`
   font-family: "Integral CF";
   font-size: 40px;
   font-weight: 700;
-  margin: 24px 0 24px 0;
 `;
 
-const MainCart = styled.div`
-  display: flex;
+const MainCart = styled(Flex)`
   gap: 20px;
+  margin-bottom: 170px;
+  @media (max-width: 950px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
-const ProductCart = styled.div`
+const ProductCart = styled(Flex)`
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  width: 715px;
+  width: 60%;
   height: 75%;
   overflow: auto;
   padding: 20px 24px;
-  flex-direction: column;
   gap: 24px;
-  margin-bottom: 170px;
 
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent;
   }
+
+  @media (max-width: 950px) {
+    width: 100%;
+  }
 `;
 
-const Order = styled.div`
+const Order = styled(Flex)`
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  width: 505px;
+  width: 40%;
   height: 458px;
   padding: 20px 24px;
-  flex-direction: column;
   gap: 24px;
+
+  @media (max-width: 950px) {
+    width: 100%;
+  }
 `;
 
 const Img = styled.img`
-  width: 125px;
   border-radius: 10px;
+  width: 125px;
+  height: 125px;
+  object-position: center;
+  object-fit: cover;
+  overflow: hidden;
+
+  @media (max-width: 950px) {
+    width: 100px;
+    height: 100px;
+  }
 `;
 
 const Title = styled.div`
@@ -334,13 +345,6 @@ const Size = styled.div`
   font-weight: 400;
 `;
 
-const Color = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 14px;
-  font-weight: 400;
-`;
-
 const Price = styled.div`
   color: #000;
   font-family: "Satoshi";
@@ -348,42 +352,28 @@ const Price = styled.div`
   font-weight: 700;
 `;
 
-const CartDetail = styled.div`
-  display: flex;
+const CartDetail = styled(Flex)`
   gap: 16px;
 `;
 
-const Count = styled.div`
-  display: flex;
-  flex-direction: column;
+const Count = styled(Flex)`
   gap: 2px;
-  width: 100%;
 `;
 
-const Delete = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-`;
+const Delete = styled(Flex)``;
 
-const PriceSvg = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
+const PriceSvg = styled(Flex)``;
 
-const Btn = styled.div`
-  display: flex;
+const Btn = styled(Flex)`
   gap: 20px;
   border-radius: 62px;
   background: #f0f0f0;
-  display: flex;
   padding: 12px 20px;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
+  @media (max-width: 950px) {
+    padding: 6px 10px;
+    gap: 10px;
+  }
 `;
 
 const One = styled.div`
@@ -400,16 +390,8 @@ const Summary = styled.div`
   font-weight: 700;
 `;
 
-const MainTotal = styled.div`
-  display: flex;
-  flex-direction: column;
+const MainTotal = styled(Flex)`
   gap: 20px;
-`;
-
-const TotalContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 const Total = styled.div`
@@ -439,18 +421,14 @@ const FinalTotal = styled(SubTotal)`
   font-size: 24px;
 `;
 
-const BtnList = styled.div`
-  display: flex;
+const BtnList = styled(Flex)`
   gap: 12px;
 `;
 
-const CheckBtn = styled.div`
+const CheckBtn = styled(Flex)`
   border-radius: 62px;
   background: #000;
-  display: flex;
   padding: 16px 54px;
-  justify-content: center;
-  align-items: center;
   gap: 12px;
   cursor: pointer;
   &:hover {
@@ -465,12 +443,10 @@ const CheckOut = styled.div`
   font-weight: 500;
 `;
 
-const Frame = styled.div`
+const Frame = styled(Flex)`
   border-radius: 62px;
   background: #f0f0f0;
-  display: flex;
   padding: 12px 16px;
-  align-items: flex-start;
   gap: 12px;
   flex: 1 0 0;
   cursor: pointer;
@@ -486,14 +462,11 @@ const Promo = styled.div`
   font-weight: 400;
 `;
 
-const ApplyBack = styled.div`
+const ApplyBack = styled(Flex)`
   border-radius: 62px;
   background: #000;
-  display: flex;
   width: 119px;
   padding: 12px 16px;
-  justify-content: center;
-  align-items: center;
   gap: 12px;
   cursor: pointer;
   &:hover {

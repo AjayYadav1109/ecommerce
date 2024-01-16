@@ -275,6 +275,7 @@ const Div = styled.div``;
 
 const Container = styled.div`
   display: flex;
+  margin-top: 96px;
   flex-direction: column;
   width: 100%;
   justify-content: center;
@@ -439,7 +440,6 @@ const ButtonList = styled.div`
 
 const BtnBack = styled.div`
   border-radius: 62px;
-  /* background: ${(props) => (props.selected ? "black" : "#F0F0F0")}; */
   display: flex;
   background: #f0f0f0;
   padding: 10px 20px;
