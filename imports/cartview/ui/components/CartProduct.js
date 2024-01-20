@@ -271,7 +271,7 @@ const Del = styled.div`
 
 const YourCart = styled.div`
   color: #000;
-  font-family: "Integral CF";
+  font-family: "IntegralCF";
   font-size: 40px;
   font-weight: 700;
 `;

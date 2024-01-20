@@ -98,9 +98,8 @@ const Div = styled.div``;
 const LikePara = styled.div`
   color: #000;
   text-align: center;
-  font-family: "Integral CF";
+  font-family: "IntegralCF";
   font-size: 48px;
-  font-weight: 700;
   margin-bottom: 50px;
 `;
 

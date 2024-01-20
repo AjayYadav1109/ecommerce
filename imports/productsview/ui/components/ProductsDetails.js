@@ -199,7 +199,7 @@ const Content = styled.div`
   flex-direction: column;
 `;
 const Title = styled.div`
-  font-family: "Integral CF";
+  font-family: "IntegralCF";
   font-size: 40px;
   font-weight: 700;
 `;

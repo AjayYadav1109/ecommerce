@@ -3,13 +3,13 @@ import { createGlobalStyle } from "styled-components";
 const GlobalStyles = createGlobalStyle`
 
 @font-face {
- font-family: 'Integral CF';
+ font-family: 'IntegralCF';
  src: url(/fonts/vertopal.com_Fontspring-DEMO-integralcf-bold.ttf) format("truetype");
  font-weight: 700;
 }
 
 @font-face {
- font-family: 'Satoshi';
+ font-family: 'SatoshiLight';
  src: url(/fonts/vertopal.com_Satoshi-Light.ttf) format("truetype");
  font-weight: 400;
 }
@@ -21,7 +21,7 @@ const GlobalStyles = createGlobalStyle`
 }
 
 @font-face {
- font-family: 'Satoshi';
+ font-family: 'SatoshiBold';
  src: url(/fonts/vertopal.com_Satoshi-Bold.ttf) format("truetype");
  font-weight: 700;
 }

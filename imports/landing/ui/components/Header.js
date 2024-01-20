@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import SearchSvg from "@/assets/SearchSvg";
 import Profile from "@/assets/Profile";
 import Cart from "@/assets/Cart";
@@ -15,12 +15,12 @@ import {
 import useWindowSize from "../hooks/useWindowSize";
 import CloseSlider from "@/assets/CloseSlider";
 import OpenSlider from "@/assets/OpenSlider";
-import Sidebar from "./Sidebar";
 
 const Header = () => {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
   const dispatch = useDispatch();
   const allCategory = useSelector((store) => store.category.allCategory);
   const allCart = useSelector((store) => store.cart.allCart);
@@ -41,6 +41,13 @@ const Header = () => {
     dispatch(fetchSubcategories({ id, subcategory, dispatch, getSubcategory }));
   };
 
+  const handleSubcategory = (id) => async () => {
+    if (!isDesktop) {
+      setActiveCategory(id === activeCategory ? null : id);
+    }
+    dispatch(fetchSubcategories({ id, subcategory, dispatch, getSubcategory }));
+  };
+
   const quantity = allCart?.reduce((acc, item) => {
     return acc + item.quantity;
   }, 0);
@@ -49,262 +56,304 @@ const Header = () => {
     router.push(`/product-collection/cid=${cid}&sid=${sid}`);
 
   const cartRouteHandler = () => router.push("cartview");
+  const handleRedirectHome = () => router.push("/");
 
   const profileHandler = () => setShowModal(true);
   const toggleSidebar = () => setShowSideBar(!showSideBar);
 
-  const isDesktop = width > 950;
+  const isDesktop = width > 890;
 
   return (
-    <>
-      <Container alignItems="center" justifyContent="center" fullWidth>
-        <Wrapper alignItems="center" justifyContent="space-between" fullWidth>
-          <Logo>SHOP.CO</Logo>
-          <RightSection
-            alignItems="center"
-            justifyContent="space-between"
-            fullWidth
-          >
-            {isDesktop && (
-              <NavLink
-                alignItems="center"
-                justifyContent="space-evenly"
-                fullWidth
-              >
-                {allCategory?.map((category) => (
-                  <Icon
-                    alignItems="center"
-                    onMouseEnter={getAllSubcategory(category._id)}
-                    key={category._id}
-                  >
-                    <Shop alignItems="center">{category.category_name}</Shop>
-                    <Dropdown>
-                      {subcategory.map((sub) => (
-                        <AllSub key={sub._id}>
-                          <Sub
-                            onClick={productHandler(sub.categoryId, sub._id)}
-                          >
-                            {sub.subcategory_name}
-                          </Sub>
-                        </AllSub>
-                      ))}
-                    </Dropdown>
-                  </Icon>
-                ))}
-              </NavLink>
-            )}
-
-            <Search fullWidth>
-              <WrapSearch fullWidth>
-                <Svg>
-                  <SearchSvg />
-                </Svg>
-                <Input
-                  type="text"
-                  placeholder="Search..."
-                  onChange={searchHandler}
-                  value={search}
-                />
-              </WrapSearch>
-            </Search>
-            <Carts alignItems="center">
-              <CartSvg onClick={cartRouteHandler}>
-                <Cart />
-                {token && <Quantity>{quantity}</Quantity>}
-              </CartSvg>
-              {!token ? (
-                <ProfileSvg onClick={profileHandler}>
-                  <Profile />
-                </ProfileSvg>
-              ) : (
-                <LargeSize
-                  onClick={logoutHandler}
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Large>Logout</Large>
-                </LargeSize>
-              )}
-            </Carts>
+    <HeaderSection justifyContent="center" alignItems="center" fullWidth>
+      <Container justifyContent="space-between" alignItems="center" fullWidth>
+        <LeftSection justifyContent="space-between" alignItems="center">
+          {!isDesktop && (
             <MobileNavToggle onClick={toggleSidebar}>
               {showSideBar ? <CloseSlider /> : <OpenSlider />}
             </MobileNavToggle>
-            {showSideBar && <Sidebar />}
-          </RightSection>
-        </Wrapper>
+          )}
+          <LogoSection onClick={handleRedirectHome}>SHOP.CO</LogoSection>
+        </LeftSection>
+        <RightSection
+          justifyContent="space-between"
+          alignItems="center"
+          fullWidth
+        >
+          <Navbar
+            alignItems="center"
+            justifyContent="space-evenly"
+            fullWidth
+            onSidebar={!showSideBar && !isDesktop}
+          >
+            {allCategory?.map((category) => (
+              <CategoryText
+                key={category._id}
+                onMouseEnter={
+                  isDesktop ? getAllSubcategory(category._id) : null
+                }
+                onClick={handleSubcategory(category._id)}
+                isDesk={isDesktop}
+                showDropdown={activeCategory === category._id}
+              >
+                {category.category_name}
+                <Dropdown>
+                  {subcategory.map((sub) => (
+                    <SubcategoryText
+                      key={sub._id}
+                      onClick={productHandler(sub.categoryId, sub._id)}
+                    >
+                      {sub.subcategory_name}
+                    </SubcategoryText>
+                  ))}
+                </Dropdown>
+              </CategoryText>
+            ))}
+          </Navbar>
+          {isDesktop ? (
+            <SearchWrapper fullWidth alignItems="center">
+              <SvgWrap>
+                <SearchSvg />
+              </SvgWrap>
+              <SearchInput
+                type="text"
+                placeholder="Search for products..."
+                onChange={searchHandler}
+                value={search}
+              />
+            </SearchWrapper>
+          ) : (
+            <SvgWrap>
+              <SearchSvg />
+            </SvgWrap>
+          )}
+          <CartSvgWrap onClick={cartRouteHandler}>
+            <Cart />
+            {token && <Quantity>{quantity}</Quantity>}
+          </CartSvgWrap>
+          <ProfileSvgWrap>
+            <Profile />
+            <MoreDetails
+              direction="column"
+              fullWidth
+              alignItems="center"
+              justifyContent="center"
+            >
+              {!token ? (
+                <FieldButton onClick={profileHandler}>Login</FieldButton>
+              ) : (
+                <FieldButton onClick={logoutHandler}>Logout</FieldButton>
+              )}
+            </MoreDetails>
+          </ProfileSvgWrap>
+        </RightSection>
       </Container>
       {showModal && <LoginModal setShowModal={setShowModal} />}
-    </>
+    </HeaderSection>
   );
 };
 
 export default Header;
 
-const MobileNavToggle = styled.div`
-  display: none;
-
-  svg {
-    cursor: pointer;
-  }
-
-  @media (max-width: 950px) {
-    display: flex;
-    z-index: 99999;
-  }
-`;
-
-const RightSection = styled(Flex)`
-  gap: 15px;
-
-  @media (max-width: 950px) {
-    justify-content: flex-end;
-  }
-`;
-
-const NavLink = styled(Flex)`
-  gap: 15px;
-`;
-
-const Dropdown = styled.div`
-  top: 96px;
-  background-color: #fff;
-  width: 50%;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 auto;
-  position: absolute;
-`;
-
-const Container = styled(Flex)`
-  background: #fff;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 10;
-`;
-
-const AllSub = styled.div`
-  background-color: white;
-  width: 100%;
-  justify-content: flex-start;
-  padding: 5px;
-`;
-
 const Quantity = styled.div`
-  font-family: "Satoshi";
-  font-weight: 700;
-  padding: 2px 4px;
-  top: -22px;
-  left: 5px;
   position: absolute;
+  font-family: "SatoshiBold";
+  padding: 2px 4px;
+  top: -5px;
+  right: -5px;
+  background: green;
+  border-radius: 50%;
+  font-size: 11px;
 `;
 
-const LargeSize = styled(Flex)`
-  border-radius: 62px;
-  background: #000;
-  padding: 6px 12px;
+const FieldButton = styled.button`
   cursor: pointer;
+  background-color: #000;
+  color: #fff;
+  width: 100%;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 18px;
+  border: none;
+
   &:hover {
     background-color: #454545;
   }
 `;
 
-const Large = styled.div`
-  color: #fff;
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 500;
-`;
-
-const Sub = styled.div`
-  font-size: 12px;
-  font-family: "Satoshi";
-  font-weight: 500;
-  cursor: pointer;
-  &:hover {
-    font-family: "Satoshi";
-    font-weight: 700;
-  }
-`;
-const Wrapper = styled(Flex)`
-  gap: 35px;
-  max-width: 1240px;
-  padding: 10px;
-`;
-
-const Logo = styled.div`
-  font-size: 32px;
-  font-family: "Integral CF";
-  font-weight: 700;
-  color: #000;
-  cursor: pointer;
-  line-height: 1;
-`;
-
-const Icon = styled(Flex)`
-  color: #000;
-  height: 70px;
-  font-family: "Satoshi";
-  font-weight: 600;
-
-  &:hover {
-    border-bottom: 4px solid #0db7af;
-
-    ${Dropdown} {
-      display: flex;
-    }
-  }
-`;
-
-const Search = styled(Flex)`
-  color: #000;
-  max-width: 577px;
-  border-radius: 62px;
-  background: #f0f0f0;
-`;
-
-const Carts = styled(Flex)`
-  color: #000;
-  gap: 14px;
-`;
-
-const Input = styled.input`
-  border-radius: 62px;
-  background: #f0f0f0;
+const MoreDetails = styled(Flex)`
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 95px;
+  background: #fff;
   padding: 5px;
+  gap: 5px;
+  border-radius: 5px;
+`;
+
+const SearchInput = styled.input`
+  background: transparent;
+  border: none;
   width: 100%;
-  min-width: 60px;
-  border: transparent;
-  color: #000;
-  font-family: "Satoshi";
-  font-weight: 400;
+  font-family: "SatoshiLight";
   &:focus {
     outline: none;
   }
 `;
 
-const Svg = styled.div`
-  width: 24px;
-  height: 24px;
-`;
-
-const WrapSearch = styled(Flex)`
-  padding: 6px 12px;
-  gap: 5px;
-`;
-
-const Shop = styled(Flex)`
-  gap: 4px;
-  cursor: pointer;
-`;
-
-const CartSvg = styled.div`
-  cursor: pointer;
+const CartSvgWrap = styled(Flex)`
   position: relative;
+  cursor: pointer;
 `;
 
-const ProfileSvg = styled.div`
+const ProfileSvgWrap = styled(Flex)`
+  position: relative;
   cursor: pointer;
+  &:hover {
+    ${MoreDetails} {
+      display: flex;
+    }
+  }
+`;
+
+const SvgWrap = styled(Flex)`
+  cursor: pointer;
+`;
+
+const SearchWrapper = styled(Flex)`
+  padding: 5px;
+  gap: 12px;
+  max-width: 300px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+
+  @media (max-width: 1024px) {
+    max-width: 175px;
+  }
+`;
+
+const SubcategoryText = styled(Flex)`
+  font-family: "Satoshi";
+  cursor: pointer;
+  &:hover {
+    font-family: "SatoshiBold";
+  }
+`;
+
+const Dropdown = styled(Flex)`
+  top: 70%;
+  background-color: #fff;
+  border-radius: 0 0 5px 5px;
+  width: auto;
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  padding: 10px;
+  gap: 10px;
+
+  @media (max-width: 890px) {
+    position: relative;
+    width: 100%;
+    left: 10px;
+  }
+`;
+
+const CategoryText = styled(Flex)`
+  cursor: pointer;
+  ${({ isDesk }) =>
+    isDesk &&
+    css`
+      &:hover {
+        border-bottom: 4px solid #0db7af;
+
+        ${Dropdown} {
+          display: flex;
+        }
+      }
+    `}
+
+  @media (max-width: 890px) {
+    flex-direction: column;
+    position: relative;
+
+    ${({ showDropdown }) =>
+      showDropdown &&
+      css`
+        ${Dropdown} {
+          display: flex;
+        }
+      `}
+  }
+`;
+
+const Navbar = styled(Flex)`
+  ${({ onSidebar }) =>
+    onSidebar &&
+    css`
+      display: none;
+    `}
+
+  @media (max-width: 890px) {
+    position: absolute;
+    flex-direction: column;
+    background-color: #fff;
+    min-height: 100vh;
+    left: 0;
+    top: 100%;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 10px;
+  }
+`;
+
+const RightSection = styled(Flex)`
+  gap: 10px;
+
+  @media (max-width: 890px) {
+    justify-content: flex-end;
+  }
+`;
+
+const MobileNavToggle = styled(Flex)`
+  z-index: 99999;
+  svg {
+    cursor: pointer;
+  }
+`;
+
+const LogoSection = styled.div`
+  font-family: "IntegralCF";
+  font-size: 30px;
+  cursor: pointer;
+  line-height: 1;
+
+  @media (max-width: 890px) {
+    font-size: 25px;
+  }
+`;
+
+const LeftSection = styled(Flex)`
+  gap: 16px;
+`;
+
+const Container = styled(Flex)`
+  gap: 35px;
+  max-width: 1240px;
+  padding: 15px 10px;
+
+  @media (max-width: 890px) {
+    padding: 10px;
+  }
+`;
+
+const HeaderSection = styled(Flex)`
+  background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  gap: 5px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
 `;

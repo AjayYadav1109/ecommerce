@@ -3,58 +3,42 @@ import GucciSvg from "@/assets/BrandSvg/GucciSvg";
 import PradaSvg from "@/assets/BrandSvg/PradaSvg";
 import VersaceSvg from "@/assets/BrandSvg/VersaceSvg";
 import ZaraSvg from "@/assets/BrandSvg/ZaraSvg";
+import Flex from "@/imports/allproducts/atoms/Flex";
 import styled from "styled-components";
 
 const BrandSvg = () => {
   return (
-    <Container>
-      <Wrapper>
-        <SecondBox>
-          <>
-            <VersaceSvg />
-          </>
-          <>
-            <ZaraSvg />
-          </>
-          <>
-            <GucciSvg />
-          </>
-          <>
-            <PradaSvg />
-          </>
-          <>
-            <CalvinSvg />
-          </>
-        </SecondBox>
-      </Wrapper>
-    </Container>
+    <LogoSection justifyContent="center" alignItems="center" fullWidth>
+      <Container justifyContent="space-between" alignItems="center" fullWidth>
+        <VersaceSvg />
+        <ZaraSvg />
+        <GucciSvg />
+        <PradaSvg />
+        <CalvinSvg />
+      </Container>
+    </LogoSection>
   );
 };
 
 export default BrandSvg;
 
-const Container = styled.div`
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  background-color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-`;
-
-const SecondBox = styled.div`
-  display: flex;
-  gap: 106px;
+const Container = styled(Flex)`
   max-width: 1240px;
-  align-items: center;
-  width: 100%;
-  margin: 44px 100px;
+  padding: 43px 10px;
+
+  @media (max-width: 890px) {
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 39px 10px;
+    gap: 35px;
+
+    svg {
+      width: auto;
+      height: 23px;
+    }
+  }
+`;
+
+const LogoSection = styled(Flex)`
+  background-color: #000;
 `;

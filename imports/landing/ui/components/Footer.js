@@ -8,132 +8,158 @@ import MsgSvg from "@/assets/MsgSvg";
 import Flex from "@/imports/allproducts/atoms/Flex";
 import { useState } from "react";
 import styled, { css } from "styled-components";
-import { company, faq, help, resources } from "./constants/constants";
+import { COMPANY, FAQ, HELP, RESOURCES } from "./constants/constants";
 
 const Footer = () => {
   const [inputBox, setInputBox] = useState("");
 
-  const inputHandler = (e) => setInputBox(e.target.value);
+  const handleChange = (e) => setInputBox(e.target.value);
 
   return (
-    <Container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      fullWidth
-    >
-      <InputWrap justifyContent="space-between" alignItems="center" fullWidth>
-        <Offer>STAY UPTO DATE ABOUT OUR LATEST OFFERS</Offer>
-        <InputSib direction="column">
-          <InputParent alignItems="center">
-            <MsgSvg />
-            <InputBox
-              type="text"
-              placeholder="Enter your email address"
-              onChange={inputHandler}
-              value={inputBox}
-            />
-          </InputParent>
-          <SubButton>Subscribe to Newsletter</SubButton>
-        </InputSib>
-      </InputWrap>
-      <Wrapper justifyContent="space-between" alignItems="center" fullWidth>
-        <LogoData direction="column" justifyContent="space-between">
-          <Logo>SHOP.CO</Logo>
-          <Para>
-            We have clothes that suits your style and which you're proud to
-            wear. From women to men.
-          </Para>
-          <HandlerSvg />
-        </LogoData>
-        <CompWrap justifyContent="space-between" fullWidth>
-          <Company direction="column">
-            <Comp>COMPANY</Comp>
-            <Flex direction="column">
-              {company.map((item) => (
-                <Items selected direction="column">
-                  {item}
-                </Items>
-              ))}
-            </Flex>
-          </Company>
-          <Company direction="column">
-            <Comp>HELP</Comp>
-            <Flex direction="column">
-              {help.map((item) => (
-                <Items selected direction="column">
-                  {item}
-                </Items>
-              ))}
-            </Flex>
-          </Company>
-          <Company direction="column">
-            <Comp>FAQ</Comp>
-            <Flex direction="column">
-              {faq.map((item) => (
-                <Items selected direction="column">
-                  {item}
-                </Items>
-              ))}
-            </Flex>
-          </Company>
-          <Company direction="column">
-            <Comp>RESOURCES</Comp>
-            <Flex direction="column">
-              {resources.map((item) => (
-                <Items selected direction="column">
-                  {item}
-                </Items>
-              ))}
-            </Flex>
-          </Company>
-        </CompWrap>
-      </Wrapper>
-      <FootWrap justifyContent="space-between" alignItems="center" fullWidth>
-        <CopyRight>Shop.co © 2000-2023, All Rights Reserved</CopyRight>
-        <CardSvg>
-          <VisaSvg />
-          <MasterSvg />
-          <PaypalSvg />
-          <AppleSvg />
-          <GpaySvg />
-        </CardSvg>
-      </FootWrap>
-    </Container>
+    <FooterSection justifyContent="center" alignItems="center" fullWidth>
+      <Container
+        justifyContent="center"
+        alignItems="center"
+        direction="column"
+        fullWidth
+      >
+        <OfferDetailsWrap
+          justifyContent="space-between"
+          alignItems="center"
+          fullWidth
+        >
+          <OfferTitle>STAY UPTO DATE ABOUT OUR LATEST OFFERS</OfferTitle>
+          <InputGroup direction="column">
+            <InputWrap alignItems="center">
+              <MsgSvg />
+              <InputBox
+                type="text"
+                placeholder="Enter your email address"
+                onChange={handleChange}
+                value={inputBox}
+              />
+            </InputWrap>
+            <SubscribeButton>Subscribe to Newsletter</SubscribeButton>
+          </InputGroup>
+        </OfferDetailsWrap>
+        <OtherDetails
+          justifyContent="space-between"
+          alignItems="center"
+          fullWidth
+        >
+          <LogoData direction="column" justifyContent="space-between">
+            <Logo>SHOP.CO</Logo>
+            <Discription>
+              We have clothes that suits your style and which you're proud to
+              wear. From women to men.
+            </Discription>
+            <HandlerSvg />
+          </LogoData>
+          <LinkWrap>
+            <Company direction="column">
+              <Comp>COMPANY</Comp>
+              <Flex direction="column">
+                {COMPANY.map((item) => (
+                  <Items selected direction="column">
+                    {item}
+                  </Items>
+                ))}
+              </Flex>
+            </Company>
+            <Company direction="column">
+              <Comp>HELP</Comp>
+              <Flex direction="column">
+                {HELP.map((item) => (
+                  <Items selected direction="column">
+                    {item}
+                  </Items>
+                ))}
+              </Flex>
+            </Company>
+            <Company direction="column">
+              <Comp>FAQ</Comp>
+              <Flex direction="column">
+                {FAQ.map((item) => (
+                  <Items selected direction="column">
+                    {item}
+                  </Items>
+                ))}
+              </Flex>
+            </Company>
+            <Company direction="column">
+              <Comp>RESOURCES</Comp>
+              <Flex direction="column">
+                {RESOURCES.map((item) => (
+                  <Items selected direction="column">
+                    {item}
+                  </Items>
+                ))}
+              </Flex>
+            </Company>
+          </LinkWrap>
+        </OtherDetails>
+        <Border />
+        <CopyRightWrap
+          justifyContent="space-between"
+          alignItems="center"
+          fullWidth
+        >
+          <CopyRightText fullWidth>
+            Shop.co © 2000-2023, All Rights Reserved
+          </CopyRightText>
+          <CardSvg justifyContent="space-between">
+            <VisaSvg />
+            <MasterSvg />
+            <PaypalSvg />
+            <AppleSvg />
+            <GpaySvg />
+          </CardSvg>
+        </CopyRightWrap>
+      </Container>
+    </FooterSection>
   );
 };
 
 export default Footer;
 
-const Container = styled(Flex)`
-  background: #f0f0f0;
-  position: relative;
+const Border = styled.div`
+  background: rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 1px;
 `;
 
-const InputWrap = styled(Flex)`
-  max-width: 1240px;
-  padding: 36px 64px;
-  background-color: #000;
-  border-radius: 20px;
-  position: absolute;
-  width: 95%;
-  top: -90px;
+const CardSvg = styled(Flex)`
+  gap: 12px;
+  width: 280px;
 
-  @media (max-width: 950px) {
-    flex-direction: column;
-    padding: 9px 24px;
-    gap: 32px;
+  @media (max-width: 890px) {
+    justify-content: center;
   }
 `;
 
-const CompWrap = styled(Flex)``;
+const CopyRightText = styled(Flex)`
+  font-family: "SatoshiLight";
+  font-size: 14px;
+
+  @media (max-width: 890px) {
+    justify-content: center;
+  }
+`;
+
+const CopyRightWrap = styled(Flex)`
+  @media (max-width: 890px) {
+    justify-content: center;
+    flex-direction: column;
+    gap: 15px;
+  }
+`;
 
 const Items = styled(Flex)`
-  font-family: "Satoshi";
+  font-family: "SatoshiLight";
   font-size: 16px;
-  font-weight: 400;
-  line-height: 37px;
+  line-height: 30px;
   cursor: pointer;
+
   ${({ selected }) =>
     selected &&
     css`
@@ -143,116 +169,145 @@ const Items = styled(Flex)`
     `}
 `;
 
-const Offer = styled.div`
-  font-family: "Integral CF";
-  font-size: 40px;
-  font-weight: 700;
-  background-color: #000;
-  width: 50%;
-  color: #ffffff;
+const Comp = styled(Flex)`
+  color: #000;
+  font-family: "SatoshiBold";
+  font-size: 16px;
+  letter-spacing: 3px;
+`;
 
-  @media (max-width: 950px) {
-    font-size: 32px;
-    width: 100%;
-    text-align: center;
+const Company = styled(Flex)`
+  width: 160px;
+`;
+
+const LinkWrap = styled.div`
+  width: 100%;
+  gap: 20px;
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+
+  @media (max-width: 1025px) {
+    gap: 55px;
+  }
+
+  @media (max-width: 890px) {
+    gap: 20px;
+    place-items: self-start;
   }
 `;
 
-const InputSib = styled(Flex)`
-  gap: 14px;
-  background-color: #000;
+const Discription = styled(Flex)`
+  font-family: "SatoshiLight";
 `;
 
-const InputParent = styled(Flex)`
-  width: 349px;
-  padding: 12px 16px;
+const Logo = styled(Flex)`
+  font-family: "IntegralCF";
+  font-size: 33px;
+`;
+
+const LogoData = styled(Flex)`
+  gap: 25px;
+  width: 35%;
+
+  @media (max-width: 1025px) {
+    width: 50%;
+  }
+
+  @media (max-width: 890px) {
+    width: 100%;
+  }
+`;
+
+const OtherDetails = styled(Flex)`
+  gap: 35px;
+
+  @media (max-width: 1025px) {
+    flex-direction: column;
+    gap: 50px;
+    align-items: flex-start;
+  }
+`;
+
+const SubscribeButton = styled.button`
   font-family: "Satoshi";
   font-size: 16px;
-  font-weight: 400;
+  width: 100%;
+  padding: 12px 16px;
   border-radius: 62px;
-  background-color: #fff;
-  gap: 12px;
+  cursor: pointer;
+  border: none;
+
+  &:hover {
+    background-color: #d8d8d8;
+  }
 `;
 
 const InputBox = styled.input`
+  width: 100%;
   border: none;
   &:focus {
     outline: none;
   }
 `;
 
-const SubButton = styled.button`
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 500;
-  width: 349px;
+const InputWrap = styled(Flex)`
+  width: 100%;
   padding: 12px 16px;
-  border-radius: 62px;
-  cursor: pointer;
-  &:hover {
-    background-color: #d8d8d8;
-  }
-`;
-
-const Wrapper = styled(Flex)`
-  max-width: 1240px;
-  padding: 140px 0 50px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 950px) {
-    flex-direction: column;
-    margin-top: 50px;
-  }
-`;
-
-const LogoData = styled(Flex)`
-  width: 248px;
-  gap: 25px;
-`;
-
-const Company = styled.div`
-  gap: 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-`;
-
-const Logo = styled.div`
-  font-family: "Integral CF";
-  font-weight: 700;
-  font-size: 33px;
-`;
-const Para = styled.div`
-  font-family: "Satoshi";
-  font-weight: 400;
-`;
-
-const Comp = styled.div`
-  color: #000;
-  font-family: "Satoshi";
+  font-family: "SatoshiLight";
   font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  letter-spacing: 3px;
+  border-radius: 62px;
+  background-color: #fff;
+  gap: 12px;
 `;
 
-const FootWrap = styled(Flex)`
-  max-width: 1240px;
-  padding: 25px 0 88px 0;
-  flex-wrap: wrap;
-  @media (max-width: 950px) {
-    justify-content: center;
-    gap: 15px;
+const InputGroup = styled(Flex)`
+  gap: 14px;
+  width: 40%;
+
+  @media (max-width: 890px) {
+    width: 100%;
   }
 `;
 
-const CopyRight = styled.div`
-  font-family: "Satoshi";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
+const OfferTitle = styled(Flex)`
+  font-family: "IntegralCF";
+  font-size: 40px;
+  background-color: #000;
+  width: 50%;
+  color: #ffffff;
+
+  @media (max-width: 890px) {
+    font-size: 32px;
+    text-align: center;
+    justify-content: center;
+    width: 70%;
+  }
+
+  @media (max-width: 520px) {
+    width: 100%;
+  }
 `;
 
-const CardSvg = styled(Flex)`
-  width: 281px;
-  gap: 12px;
+const OfferDetailsWrap = styled(Flex)`
+  padding: 36px 64px;
+  background-color: #000;
+  border-radius: 20px;
+
+  @media (max-width: 890px) {
+    flex-direction: column;
+    padding: 28px 24px;
+    gap: 32px;
+  }
+`;
+
+const Container = styled(Flex)`
+  max-width: 1240px;
+  padding: 50px 10px;
+  gap: 50px;
+`;
+
+const FooterSection = styled(Flex)`
+  background: #f0f0f0;
+  margin-top: 70px;
 `;

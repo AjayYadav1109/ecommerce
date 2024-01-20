@@ -7,11 +7,13 @@ import {
   getSubcategory,
 } from "@/imports/allproducts/apis/slice/categorySlice";
 import { getProduct } from "@/imports/allproducts/apis/slice/productSlice";
+import Flex from "@/imports/allproducts/atoms/Flex";
 import Footer from "@/imports/landing/ui/components/Footer";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import styled from "styled-components";
 
 const Header = dynamic(() => import("@/imports/landing/ui/components/Header"), {
   ssr: false,
@@ -36,11 +38,11 @@ const productCollection = ({ productData, filterData }) => {
   }, [id]);
 
   return (
-    <>
+    <ProductCollectionSection direction="column" alignItems="center" fullWidth>
       <Header />
       <ProductInfo />
       <Footer />
-    </>
+    </ProductCollectionSection>
   );
 };
 
@@ -67,3 +69,5 @@ productCollection.getInitialProps = async (ctx) => {
 };
 
 export default productCollection;
+
+const ProductCollectionSection = styled(Flex)``;

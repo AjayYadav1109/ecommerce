@@ -1,15 +1,15 @@
-export const company = ["About", "Features", "Works", "Career"];
+export const COMPANY = ["About", "Features", "Works", "Career"];
 
-export const help = [
+export const HELP = [
   "Customer Support",
   "Delivery Details",
   "Terms & Conditions",
   "Privacy Policy",
 ];
 
-export const faq = ["Account", "Manage Deliveries", "Orders", "Payments"];
+export const FAQ = ["Account", "Manage Deliveries", "Orders", "Payments"];
 
-export const resources = [
+export const RESOURCES = [
   "Free eBooks",
   "Development Tutorial",
   "How to - Blog",

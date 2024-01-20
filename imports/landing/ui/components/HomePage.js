@@ -1,162 +1,143 @@
-import Link from "next/link";
+import Flex from "@/imports/allproducts/atoms/Flex";
 import styled from "styled-components";
+import useWindowSize from "../hooks/useWindowSize";
+import { useRouter } from "next/router";
+import { CLIENTDETAILS } from "@/imports/allproducts/apis/api/api";
 
 const HomePage = () => {
+  const { width } = useWindowSize();
+  const router = useRouter();
+
+  const handleProductCollection = () => {
+    router.push(
+      "/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077"
+    );
+  };
+  const isDesktop = width > 890;
   return (
-    <Container>
-      <Wrapper>
-        <FirstBox>
-          <Paras>
-            <BigPara>
-              <BoldPara>FIND CLOTHES THAT MATCHES YOUR STYLE</BoldPara>
-            </BigPara>
-            <SmallPara>
-              <Para>
-                Browse through our diverse range of meticulously crafted
-                garments, designed to bring out your individuality and cater to
-                your sense of style.
-              </Para>
-            </SmallPara>
-          </Paras>
-          <Div>
-            <Link href="/product-collection/cid=65784fb62c03ca6b8ee2cf33&sid=65785509e29e11e1cdcc3077">
-              <ShopButton>Shop Now</ShopButton>
-            </Link>
-          </Div>
-          <Details>
-            <Div>
-              <Number>200+</Number>
-              <Brand>International Brands</Brand>
-            </Div>
-            <Div>
-              <Number>2,000+</Number>
-              <Brand>High-Quality Products</Brand>
-            </Div>
-            <Div>
-              <Number>30,000+</Number>
-              <Brand>Happy Customers</Brand>
-            </Div>
-          </Details>
-        </FirstBox>
-      </Wrapper>
-    </Container>
+    <HeroSection
+      justifyContent="center"
+      alignItems="center"
+      direction="column"
+      fullWidth
+    >
+      <Container isDesktop={isDesktop} fullWidth>
+        <DetailsBox justifyContent="center" direction="column" fullWidth>
+          <MainTitle>FIND CLOTHES THAT MATCHES YOUR STYLE</MainTitle>
+          <Discription>
+            Browse through our diverse range of meticulously crafted garments,
+            designed to bring out your individuality and cater to your sense of
+            style.
+          </Discription>
+          <ShopButton onClick={handleProductCollection}>Shop Now</ShopButton>
+          <OtherDetails fullWidth>
+            {CLIENTDETAILS.map((v) => (
+              <ClientDetails direction="column">
+                <TotalClients>{v.clients}</TotalClients>
+                <ClientDisc>{v.discription}</ClientDisc>
+              </ClientDetails>
+            ))}
+          </OtherDetails>
+        </DetailsBox>
+      </Container>
+    </HeroSection>
   );
 };
 
 export default HomePage;
 
-const Container = styled.div`
-  position: relative;
-  margin-top: 96px;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background-image: url("Rectangle.jpg");
-    background-repeat: no-repeat;
-    background-size: contain;
-    padding-top: 46.04166666666667%;
-  }
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  max-width: 1240px;
-  width: 100%;
-  z-index: 1;
-`;
-
-const BigPara = styled.div`
-  max-width: 1240px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const SmallPara = styled.div`
-  max-width: 1240px;
-  width: 60%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Div = styled.div``;
-
-const FirstBox = styled.div``;
-
-const Paras = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-`;
-
-const BoldPara = styled.div`
-  font-family: "Integral CF";
-  font-size: 64px;
-  font-style: normal;
-  font-weight: 700;
-  margin: 103px 0 0 0;
-  width: 50%;
-`;
-
-const Para = styled.div`
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 400;
-  width: 545px;
-  margin: 32px 0 32px 0;
-`;
-
 const ShopButton = styled.button`
-  width: 210px;
-  padding: 16px 54px;
-  border-radius: 62px;
+  padding: 13px 54px;
+  border-radius: 30px;
   background-color: #000;
   color: #fff;
   font-family: "Satoshi";
   font-size: 16px;
-  font-weight: 500;
   cursor: pointer;
+  border: none;
+
   &:hover {
     background-color: #454545;
   }
+
+  @media (max-width: 520px) {
+    width: 100%;
+  }
 `;
 
-const Details = styled.div`
-  display: flex;
-  gap: 64px;
-  justify-content: space-between;
-  margin: 48px 0 116px 0;
-  width: 50%;
-`;
-
-const Number = styled.div`
-  font-family: "Satoshi";
-  font-size: 40px;
-  font-weight: 700;
-`;
-
-const Brand = styled.div`
+const ClientDisc = styled(Flex)`
   color: rgba(0, 0, 0, 0.6);
+  font-family: "SatoshiLight";
+  font-size: 16px;
+
+  @media (max-width: 520px) {
+    font-size: 12px;
+  }
+`;
+
+const TotalClients = styled(Flex)`
+  font-family: "SatoshiBold";
+  font-size: 40px;
+
+  @media (max-width: 520px) {
+    font-size: 26px;
+  }
+`;
+
+const ClientDetails = styled(Flex)``;
+
+const OtherDetails = styled(Flex)`
+  gap: 40px;
+
+  @media (max-width: 520px) {
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+`;
+
+const Discription = styled(Flex)`
   font-family: "Satoshi";
   font-size: 16px;
-  font-weight: 400;
 `;
 
-const Small = styled.div`
-  width: 56px;
+const MainTitle = styled(Flex)`
+  font-family: "IntegralCF";
+  font-size: 55px;
+
+  @media (max-width: 890px) {
+    font-size: 47px;
+  }
+
+  @media (max-width: 520px) {
+    font-size: 36px;
+  }
 `;
 
-const Big = styled.div`
-  width: 104px;
+const DetailsBox = styled(Flex)`
+  gap: 32px;
+  padding: 103px 0;
+  width: 50%;
+
+  @media (max-width: 1024px) {
+    width: 60%;
+  }
+
+  @media (max-width: 890px) {
+    padding: 40px 0;
+  }
+
+  @media (max-width: 520px) {
+    width: 100%;
+    padding: 40px 0;
+  }
+`;
+
+const Container = styled(Flex)`
+  max-width: 1240px;
+  padding: 10px;
+`;
+
+const HeroSection = styled(Flex)`
+  margin-top: 15px;
+  background: #f2f0f1;
 `;
