@@ -1,13 +1,16 @@
+import styled from "styled-components";
 import AllTypeProducts from "../AllTypeProducts";
-import Pagination from "../Pagination";
+
+import Flex from "@/imports/allproducts/atoms/Flex";
 
 const ProductInfo = () => {
   return (
-    <section>
+    <ProductSection fullWidth>
       <AllTypeProducts />
-      <Pagination />
-    </section>
+    </ProductSection>
   );
 };
 
 export default ProductInfo;
+
+const ProductSection = styled(Flex)``;

@@ -9,7 +9,7 @@ import Flex from "@/imports/allproducts/atoms/Flex";
 
 const Landing = () => {
   return (
-    <LandingSection direction="column">
+    <LandingSection direction="column" fullWidth>
       <HomePage />
       <ProductArrival />
       <DressStyle />

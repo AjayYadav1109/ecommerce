@@ -21,7 +21,7 @@ const ProductArrival = () => {
   };
 
   return (
-    <ProductSection justifyContent="center" alignItems="center" fullWidth>
+    <Flex justifyContent="center" alignItems="center" fullWidth>
       <Container
         justifyContent="center"
         alignItems="center"
@@ -36,15 +36,13 @@ const ProductArrival = () => {
               key={items.title}
               onClick={handleProduct(items.id)}
             >
-              <ImageWrap justifyContent="center" alignItems="center">
-                <ProductImg src={items.src} alt={items.alt} />
-              </ImageWrap>
+              <ProductImg imageUrl={items.src} />
               <ProductTitle>{items.title}</ProductTitle>
               <RatingWrap>
-                <Stars>
+                <Flex>
                   {items.star}
                   <HalfStarSvg />
-                </Stars>
+                </Flex>
                 <Rating>{items.rating}</Rating>
               </RatingWrap>
               <PriceDetails>
@@ -65,12 +63,10 @@ const ProductArrival = () => {
               key={items.title}
               onClick={handleProduct(items.id)}
             >
-              <ImageWrap justifyContent="center" alignItems="center">
-                <ProductImg src={items.src} alt={items.alt} />
-              </ImageWrap>
+              <ProductImg imageUrl={items.src} />
               <ProductTitle>{items.title}</ProductTitle>
               <RatingWrap>
-                <Stars>{items.star}</Stars>
+                <Flex>{items.star}</Flex>
                 <Rating>{items.rating}</Rating>
               </RatingWrap>
               <PriceDetails>
@@ -83,7 +79,7 @@ const ProductArrival = () => {
         </ArrivalProduct>
         <ViewButton onClick={handleShowAllProduct}>View All</ViewButton>
       </Container>
-    </ProductSection>
+    </Flex>
   );
 };
 
@@ -116,7 +112,6 @@ const ViewButton = styled.button`
 const DiscountPer = styled(Flex)`
   border-radius: 15px;
   background: rgba(255, 51, 51, 0.1);
-  width: 58px;
   padding: 6px 14px;
   color: #f33;
   font-family: "Satoshi";
@@ -145,8 +140,6 @@ const Rating = styled(Flex)`
   font-size: 14px;
 `;
 
-const Stars = styled(Flex)``;
-
 const RatingWrap = styled(Flex)`
   gap: 13px;
 `;
@@ -156,17 +149,16 @@ const ProductTitle = styled(Flex)`
   font-size: 20px;
 `;
 
-const ProductImg = styled.img`
-  object-fit: cover;
-  object-position: center;
-`;
-
-const ImageWrap = styled(Flex)`
+const ProductImg = styled.div`
   width: 275px;
   height: 278px;
-  overflow: hidden;
+  background-image: url(${(props) => props.imageUrl});
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 20px;
-  background: #f0eeed;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
 const ProductBox = styled(Flex)`
@@ -200,5 +192,3 @@ const Container = styled(Flex)`
     gap: 35px;
   }
 `;
-
-const ProductSection = styled(Flex)``;

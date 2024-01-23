@@ -16,9 +16,7 @@ const DressStyle = () => {
           {DRESS_STYLE.map((v) => (
             <Details>
               <DressTitle>{v.title}</DressTitle>
-              <ImageWrap>
-                <Image src={v.src} alt={v.alt} />
-              </ImageWrap>
+              <Image imageUrl={v.src} />
             </Details>
           ))}
         </StylesWrap>
@@ -29,17 +27,16 @@ const DressStyle = () => {
 
 export default DressStyle;
 
-const Image = styled.img`
-  object-fit: contain;
-  object-position: center;
-  width: 100%;
-`;
-
-const ImageWrap = styled(Flex)`
-  border-radius: 20px;
-  overflow: hidden;
+const Image = styled.div`
   width: 500px;
   height: 300px;
+  background-image: url(${(props) => props.imageUrl});
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 
   @media (max-width: 890px) {
     width: 350px;

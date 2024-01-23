@@ -141,6 +141,20 @@ export const REVIEW_DETAILS = [
   },
 ];
 
+export const ALL_SIZES = [
+  "XX-Small",
+  "X-Small",
+  "Small",
+  "Medium",
+  "Large",
+  "X-Large",
+  "XX-Large",
+  "3X-Large",
+  "4X-Large",
+];
+
+export const PAGE_NUMBER = ["1", "2", "...", "9", "10"];
+
 export const handleRegisterApi = async (signUpData) => {
   const resp = await fetch(`${BASE_URL}/user/signup`, {
     method: "POST",

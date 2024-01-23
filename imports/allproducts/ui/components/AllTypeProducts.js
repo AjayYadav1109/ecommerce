@@ -1,85 +1,30 @@
 import ArrowSvg from "@/assets/ArrowSvg";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import DropdownSvg from "@/assets/DropdownSvg";
 import StarSvg from "@/assets/StarSvg";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { getSelectedSubcategory } from "../../apis/slice/categorySlice";
-
-const MultipleProductsTwo = [
-  {
-    title: "Skinny Fit Jeans",
-    id: 2,
-    rating: "3/5",
-    rate: "$240",
-    discount: "$260",
-    offer: "-20%",
-    star: [...Array(3)].map((_, i) => <StarSvg key={i} />),
-    src: "/image8.png",
-    alt: "image-2",
-  },
-  {
-    title: "Checkered Shirt",
-    id: 3,
-    rating: "4/5",
-    rate: "$180",
-    star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
-    src: "/image9.png",
-    alt: "image-3",
-  },
-  {
-    title: "Sleeve Striped T-shirt",
-    id: 4,
-    rating: "4/5",
-    rate: "$130",
-    discount: "$160",
-    offer: "-30%",
-    star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
-    src: "/image10.png",
-    alt: "image-4",
-  },
-];
-
-const MultipleProductsThree = [
-  {
-    title: "Vertical Striped Shirt",
-    rating: "5/5",
-    rate: "$212",
-    star: [...Array(5)].map((_, i) => <StarSvg key={i} />),
-    src: "/image11.png",
-    alt: "image-5",
-    discount: "$232",
-    offer: "-20%",
-    id: 5,
-  },
-  {
-    title: "Courage Graphic T-shirt",
-    rating: "4/5",
-    rate: "$145",
-    star: [...Array(4)].map((_, i) => <StarSvg key={i} />),
-    src: "/image12.png",
-    alt: "image-6",
-    id: 6,
-  },
-  {
-    title: "Loose Fit Bermuda Shorts",
-    rating: "3/5",
-    rate: "$80",
-    star: [...Array(3)].map((_, i) => <StarSvg key={i} />),
-    src: "/image13.png",
-    alt: "image-7",
-    id: 7,
-  },
-];
+import Flex from "../../atoms/Flex";
+import { ALL_SIZES, PAGE_NUMBER } from "../../apis/api/api";
+import LeftArrowSvg from "@/assets/LeftArrowSvg";
+import RightArrowSvg from "@/assets/RightArrowSvg";
+import useWindowSize from "@/imports/landing/ui/hooks/useWindowSize";
+import FilterSvg from "@/assets/FilterSvg";
+import { useState } from "react";
+import CloseSlider from "@/assets/CloseSlider";
 
 const AllTypeProducts = () => {
   const router = useRouter();
+  const { width } = useWindowSize();
   const dispatch = useDispatch();
   const subcategory = useSelector((store) => store.category.subcategory);
   const product = useSelector((store) => store.product.products);
   const selectedSubcategory = useSelector(
     (store) => store.category.selectedSubcategory
   );
+  const [openFilter, setOpenFilter] = useState(false);
+
   const HandleProduct = (id) => () => router.push(`/products/${id}`);
 
   const filterHandler = (cid, sid) => () => {
@@ -88,542 +33,450 @@ const AllTypeProducts = () => {
   };
 
   const homeHandler = () => router.push("/");
+  const handleShowFilter = () => setOpenFilter(!openFilter);
+  const isDesktop = width > 890;
 
   return (
-    <Container>
-      <Wrapper>
-        <Margin />
-        <TopHead>
-          <Home onClick={homeHandler}>Home</Home>
+    <Flex justifyContent="center" alignItems="center" fullWidth>
+      <Container direction="column" fullWidth>
+        <Border />
+        <TopSection alignItems="center" fullWidth>
+          <HomeLink onClick={homeHandler}>Home</HomeLink>
           <ArrowSvg />
-          <Casual>{selectedSubcategory?.subcategory_name}</Casual>
-        </TopHead>
-        <ProductContent>
-          <Filters>
-            <FilterRow>
-              <FilterName>Filters</FilterName>
-            </FilterRow>
-            <Margin />
-            <Varities>
+          <CategoryText>{selectedSubcategory?.subcategory_name}</CategoryText>
+        </TopSection>
+        <ProductContent fullWidth>
+          <FilterContainer
+            direction="column"
+            isDesktop={isDesktop}
+            openFilter={openFilter}
+          >
+            <Flex justifyContent="space-between" alignItems="center" fullWidth>
+              <FilterTitle>Filters</FilterTitle>
+              {!isDesktop && (
+                <FilterSvgWrap onClick={handleShowFilter}>
+                  <CloseSlider />
+                </FilterSvgWrap>
+              )}
+            </Flex>
+            <Border />
+            <SubcatTextWrap direction="column" fullWidth>
               {subcategory?.map((sub) => (
-                <VarGroup
+                <SubcategoryText
+                  fullWidth
                   onClick={filterHandler(sub.categoryId, sub._id)}
                   key={sub._id}
                   active={sub._id === selectedSubcategory?._id}
                 >
-                  <VarityName>{sub.subcategory_name}</VarityName>
-                </VarGroup>
+                  {sub.subcategory_name}
+                </SubcategoryText>
               ))}
-            </Varities>
-            <Margin />
-            <PriceContent>
-              <Price>Size</Price>
-            </PriceContent>
-            <ButtonList>
-              <BtnBack>
-                <Size>XX-Small</Size>
-              </BtnBack>
-              <BtnBack>
-                <Size>X-Small</Size>
-              </BtnBack>
-              <BtnBack>
-                <Size>Small</Size>
-              </BtnBack>
-              <BtnBack>
-                <Size>Medium</Size>
-              </BtnBack>
-              <BtnLargeBack>
-                <LargeSize>Large</LargeSize>
-              </BtnLargeBack>
-              <BtnBack>
-                <Size>X-Large</Size>
-              </BtnBack>
-              <BtnBack>
-                <Size>XX-Large</Size>
-              </BtnBack>
-              <BtnBack>
-                <Size>3X-Large</Size>
-              </BtnBack>
-              <BtnBack>
-                <Size>4X-Large</Size>
-              </BtnBack>
+            </SubcatTextWrap>
+            <Border />
+            <FilterTitle>Size</FilterTitle>
+            <ButtonList fullWidth wrap="wrap">
+              {ALL_SIZES.map((v) => (
+                <SizeButton
+                  justifyContent="center"
+                  alignItems="center"
+                  active={v === "Large"}
+                >
+                  {v}
+                </SizeButton>
+              ))}
             </ButtonList>
-            <Margin />
-            <ApplyBack>
-              <ApplyBtn>Apply Filter</ApplyBtn>
-            </ApplyBack>
-          </Filters>
-          <ProductsList>
-            <MainHeadline>
-              <Cas>{selectedSubcategory?.subcategory_name}</Cas>
-              <MultiHead>
-                <ShowProduct>Showing 1-10 of 100 Products</ShowProduct>
-                <Sort>Sort by:</Sort>
-                <Popular>Most Popular</Popular>
-                <DropdownSvg />
-              </MultiHead>
-            </MainHeadline>
-            <MultipleRow>
-              <SellingProduct>
-                {product?.map((items) => (
-                  <MainDiv onClick={HandleProduct(items._id)} key={items._id}>
-                    <MainImg src={items.product_img} alt="product" />
-                    <Title>{items.product_name}</Title>
-                    <StarRating>
-                      {items.rating &&
-                        [...Array(Number(items.rating))].map((_, i) => (
-                          <StarSvg key={i} />
-                        ))}
-                      <Rating>{items.rating}/5</Rating>
-                    </StarRating>
-                    <DisRate>
-                      <Rate>₹{items.price}</Rate>
-                      <Discount>{items.discount}</Discount>
-                      {items.offer ? <DisPer>-{items.offer}%</DisPer> : ""}
-                    </DisRate>
-                  </MainDiv>
+            <Border />
+            <ApplyBtn justifyContent="center" alignItems="center" fullWidth>
+              Apply Filter
+            </ApplyBtn>
+          </FilterContainer>
+          <ProductsList direction="column" fullWidth>
+            <Flex alignItems="center" justifyContent="space-between" fullWidth>
+              <MainTitle>{selectedSubcategory?.subcategory_name}</MainTitle>
+              <DiscHead alignItems="center">
+                Showing 1-10 of 100 Products
+                {isDesktop && (
+                  <PopularText justifyContent="center" alignItems="center">
+                    Sort by: Most Popular <DropdownSvg />
+                  </PopularText>
+                )}
+              </DiscHead>
+            </Flex>
+            <SellingProduct>
+              {product?.map((items) => (
+                <ProductBox
+                  direction="column"
+                  key={items._id}
+                  onClick={HandleProduct(items._id)}
+                >
+                  <ProductImg imageUrl={items.product_img} />
+                  <ProductTitle>{items.product_name}</ProductTitle>
+                  <RatingWrap>
+                    {items.rating &&
+                      [...Array(Number(items.rating))].map((_, i) => (
+                        <StarSvg key={i} />
+                      ))}
+                    <Rating>{items.rating}/5</Rating>
+                  </RatingWrap>
+                  <PriceDetails>
+                    <PriceText>₹{items.price}</PriceText>
+                    <DiscountText>{items.discount}</DiscountText>
+                    {items.offer && <DiscountPer>-{items.offer}%</DiscountPer>}
+                  </PriceDetails>
+                </ProductBox>
+              ))}
+            </SellingProduct>
+            {!isDesktop && (
+              <FilterWrap
+                justifyContent="center"
+                alignItems="center"
+                fullWidth
+                onClick={handleShowFilter}
+              >
+                <FilterSvg />
+                Filter
+              </FilterWrap>
+            )}
+            <Border />
+            <PaginationContainer
+              justifyContent="space-between"
+              alignItems="center"
+              fullWidth
+            >
+              <NextPaginationBtn justifyContent="center" alignItems="center">
+                <LeftArrowSvg />
+                {isDesktop && "Previous"}
+              </NextPaginationBtn>
+              <PageNumWrap>
+                {PAGE_NUMBER.map((v) => (
+                  <PageNumber
+                    justifyContent="center"
+                    alignItems="center"
+                    active={v === "1"}
+                  >
+                    {v}
+                  </PageNumber>
                 ))}
-              </SellingProduct>
-              <SellingProduct>
-                {MultipleProductsTwo.map((items) => (
-                  <MainDiv onClick={HandleProduct(items.id)} key={items.title}>
-                    <MainImg src={items.src} alt={items.alt} />
-                    <Title>{items.title}</Title>
-                    <StarRating>
-                      <Div>{items.star}</Div>
-                      <Rating>{items.rating}</Rating>
-                    </StarRating>
-                    <DisRate>
-                      <Rate>{items.rate}</Rate>
-                      <Discount>{items.discount}</Discount>
-                      {items.offer ? <DisPer>{items.offer}</DisPer> : ""}
-                    </DisRate>
-                  </MainDiv>
-                ))}
-              </SellingProduct>
-              <SellingProduct>
-                {MultipleProductsThree.map((items) => (
-                  <MainDiv onClick={HandleProduct(items.id)} key={items.title}>
-                    <MainImg src={items.src} alt={items.alt} />
-                    <Title>{items.title}</Title>
-                    <StarRating>
-                      <Div>{items.star}</Div>
-                      <Rating>{items.rating}</Rating>
-                    </StarRating>
-                    <DisRate>
-                      <Rate>{items.rate}</Rate>
-                      <Discount>{items.discount}</Discount>
-                      {items.offer ? <DisPer>{items.offer}</DisPer> : ""}
-                    </DisRate>
-                  </MainDiv>
-                ))}
-              </SellingProduct>
-            </MultipleRow>
+              </PageNumWrap>
+              <NextPaginationBtn justifyContent="center" alignItems="center">
+                {isDesktop && "Next"}
+                <RightArrowSvg />
+              </NextPaginationBtn>
+            </PaginationContainer>
           </ProductsList>
         </ProductContent>
-      </Wrapper>
-    </Container>
+      </Container>
+    </Flex>
   );
 };
 
 export default AllTypeProducts;
 
-const SliderWrap = styled.div`
-  .example-track.example-track-0 {
-    height: 10px;
-    background-color: gray;
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
   }
-
-  .example-track.example-track-1 {
-    height: 10px;
-    background-color: blue;
-  }
-
-  .example-track.example-track-2 {
-    height: 10px;
-    background-color: gray;
-  }
-
-  .example-thumb {
-    font-size: 0.9em;
-    text-align: center;
-    background-color: black;
-    color: white;
-    cursor: pointer;
-    border: 5px solid black;
-    border-radius: 8px;
+  to {
+    opacity: 1;
   }
 `;
 
-const VarGroup = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+const FilterWrap = styled(Flex)`
+  gap: 10px;
+  background: #000;
+  border-radius: 20px;
+  padding: 10px 10px;
   cursor: pointer;
+  position: sticky;
+  bottom: 20px;
+  color: #fff;
+
+  svg {
+    fill: #fff;
+    stroke: #fff;
+  }
+
+  &:hover {
+    background: #454545;
+  }
+`;
+
+const PageNumber = styled(Flex)`
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+
+  ${({ active }) =>
+    active &&
+    css`
+      background: rgba(0, 0, 0, 0.06);
+    `}
+
+  &:hover {
+    background-color: #d8d8d8;
+  }
+
+  @media (max-width: 890px) {
+    width: 36px;
+    height: 36px;
+  }
+`;
+
+const PageNumWrap = styled(Flex)`
+  gap: 5px;
+`;
+
+const NextPaginationBtn = styled(Flex)`
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 8px 14px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: "Satoshi";
+
+  &:hover {
+    background-color: #d8d8d8;
+  }
+
+  @media (max-width: 890px) {
+    padding: 8px 10px;
+  }
+`;
+
+const PaginationContainer = styled(Flex)`
+  gap: 10px;
+`;
+
+const DiscountPer = styled(Flex)`
+  border-radius: 15px;
+  background: rgba(255, 51, 51, 0.1);
+  padding: 6px 14px;
+  color: #f33;
+  font-family: "Satoshi";
+  font-size: 12px;
+`;
+
+const DiscountText = styled(Flex)`
+  color: rgba(0, 0, 0, 0.4);
+  font-family: "SatoshiBold";
+  font-size: 24px;
+  text-decoration: line-through;
+`;
+
+const PriceText = styled(Flex)`
+  font-family: "SatoshiBold";
+  font-size: 24px;
+`;
+
+const PriceDetails = styled(Flex)`
+  gap: 10px;
+`;
+
+const Rating = styled(Flex)`
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "SatoshiLight";
+  font-size: 14px;
+`;
+const RatingWrap = styled(Flex)`
+  gap: 5px;
+`;
+
+const ProductTitle = styled(Flex)`
+  font-family: "SatoshiBold";
+  font-size: 20px;
+`;
+
+const ProductImg = styled.div`
+  width: 275px;
+  height: 278px;
+  background-image: url(${(props) => props.imageUrl});
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+`;
+
+const ProductBox = styled(Flex)`
+  gap: 10px;
+  animation: ${fadeIn} 0.3s ease-in-out;
+`;
+
+const SellingProduct = styled.div`
   gap: 20px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+  place-items: center;
+  row-gap: 50px;
+`;
+
+const FilterSvgWrap = styled(Flex)`
+  cursor: pointer;
+  background: #f0f0f0;
+  padding: 8px;
+  border-radius: 30px;
+`;
+
+const PopularText = styled(Flex)`
+  gap: 10px;
+  color: #000;
+  font-family: "Satoshi";
+  font-size: 16px;
+`;
+
+const DiscHead = styled(Flex)`
+  font-family: "SatoshiLight";
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+  gap: 10px;
+`;
+
+const MainTitle = styled(Flex)`
+  font-family: "SatoshiBold";
+  font-size: 32px;
+  color: #000;
+
+  @media (max-width: 520px) {
+    font-size: 24px;
+  }
+`;
+
+const ProductsList = styled(Flex)`
+  gap: 20px;
+`;
+
+const ApplyBtn = styled(Flex)`
+  border-radius: 30px;
+  background: #000;
+  padding: 12px 12px;
+  color: #fff;
+  font-family: "Satoshi";
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #454545;
+  }
+`;
+
+const SizeButton = styled(Flex)`
+  border-radius: 30px;
+  background: #f0f0f0;
+  padding: 10px 20px;
+  font-family: "SatoshiLight";
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+
+  ${({ active }) =>
+    active &&
+    css`
+      background: #000;
+      color: #fff;
+    `}
+
+  &:hover {
+    background-color: #454545;
+    color: #fff;
+  }
+`;
+
+const ButtonList = styled(Flex)`
+  gap: 6px;
+`;
+
+const SubcategoryText = styled(Flex)`
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "SatoshiLight";
+  font-size: 16px;
+  cursor: pointer;
 
   ${({ active }) =>
     active &&
     css`
       background-color: #f0f0f0;
       padding: 5px;
-      border-radius: 10px;
+      border-radius: 5px;
     `}
 `;
 
-const Div = styled.div``;
-
-const Container = styled.div`
-  display: flex;
-  margin-top: 96px;
-  flex-direction: column;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+const SubcatTextWrap = styled(Flex)`
+  gap: 20px;
 `;
 
-const Wrapper = styled.div`
-  max-width: 1240px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+const FilterTitle = styled(Flex)`
+  color: #000;
+  font-family: "SatoshiBold";
+  font-size: 20px;
 `;
 
-const Margin = styled.div`
-  background: rgba(0, 0, 0, 0.1);
-  height: 1px;
-  width: 100%;
+const FilterContainer = styled(Flex)`
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: 295px;
+  padding: 20px 24px;
+  gap: 24px;
+  background: #fff;
+
+  ${({ isDesktop }) =>
+    !isDesktop &&
+    css`
+      display: none;
+    `}
+
+  ${({ openFilter }) =>
+    openFilter &&
+    css`
+      display: flex;
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      overflow: auto;
+      border-radius: 10px 10px 0 0;
+    `}
+
+  @media (max-width: 890px) {
+    width: 100%;
+  }
 `;
 
-const Margins = styled.div`
-  background: rgba(0, 0, 0, 0.1);
-  height: 1px;
-  width: 100%;
-  margin-top: 50px;
+const ProductContent = styled(Flex)`
+  gap: 20px;
+  position: relative;
 `;
 
-const TopHead = styled.div`
-  margin-top: 24px;
-  display: flex;
-  align-items: center;
+const CategoryText = styled(Flex)`
+  color: #000;
+  font-family: "SatoshiLight";
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const HomeLink = styled(Flex)`
+  color: rgba(0, 0, 0, 0.6);
+  font-family: "SatoshiLight";
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const TopSection = styled(Flex)`
   gap: 12px;
 `;
 
-const Home = styled.div`
-  color: rgba(0, 0, 0, 0.6);
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 400;
-  cursor: pointer;
-`;
-
-const Casual = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 400;
-  cursor: pointer;
-`;
-
-const ProductContent = styled.div`
-  display: flex;
-  gap: 21px;
-`;
-
-const Filters = styled.div`
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  width: 295px;
-  padding: 20px 24px;
-  flex-direction: column;
-  margin-top: 24px;
-`;
-
-const ProductsList = styled.div`
-  display: flex;
-  flex-direction: column;
+const Border = styled.div`
+  background: rgba(0, 0, 0, 0.1);
   width: 100%;
+  height: 1px;
 `;
 
-const FilterRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  cursor: pointer;
-`;
-const FilterName = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 20px;
-  font-weight: 700;
-`;
-
-const Varities = styled.div`
-  margin: 24px 0 24px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const Varity = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-`;
-
-const VarityName = styled.div`
-  color: rgba(0, 0, 0, 0.6);
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 400;
-`;
-
-const PriceSvg = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const PriceContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 24px 0 20px 0;
-  cursor: pointer;
-`;
-
-const Price = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 20px;
-  font-weight: 700;
-`;
-
-const BrightPer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-top: 4px;
-  margin-bottom: 24px;
-`;
-
-const BrightPrice = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 14px;
-  font-weight: 500;
-`;
-
-const ColorsSvg = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
-`;
-
-const FirstRowColor = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const SecondRowColor = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ButtonList = styled.div`
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-`;
-
-const BtnBack = styled.div`
-  border-radius: 62px;
-  display: flex;
-  background: #f0f0f0;
-  padding: 10px 20px;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  &:hover {
-    background-color: #d8d8d8;
-  }
-`;
-
-const Size = styled.div`
-  color: rgba(0, 0, 0, 0.6);
-  font-family: "Satoshi";
-  font-size: 14px;
-  font-weight: 400;
-`;
-
-const BtnLargeBack = styled(BtnBack)`
-  border-radius: 62px;
-  background: #000;
-  cursor: pointer;
-  &:hover {
-    background-color: #454545;
-  }
-`;
-
-const LargeSize = styled(Size)`
-  color: #fff;
-  font-weight: 500;
-`;
-
-const VaritiesExtra = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const ApplyBack = styled.div`
-  margin-top: 24px;
-  border-radius: 62px;
-  background: #000;
-  display: flex;
-  padding: 16px 54px;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  &:hover {
-    background-color: #454545;
-  }
-`;
-
-const ApplyBtn = styled.div`
-  color: #fff;
-  font-family: "Satoshi";
-  font-size: 14px;
-  font-weight: 500;
-`;
-
-const IndigoCorrect = styled.div`
-  display: flex;
-`;
-
-const Indigo = styled.div`
-  position: relative;
-  cursor: pointer;
-`;
-
-const Correct = styled.div`
-  position: absolute;
-  margin: 10px;
-  cursor: pointer;
-`;
-
-const MainHeadline = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 24px;
-  justify-content: space-between;
-`;
-const Cas = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 32px;
-  font-weight: 700;
-`;
-
-const MultiHead = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const ShowProduct = styled.div`
-  color: rgba(0, 0, 0, 0.6);
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 400;
-`;
-
-const Sort = styled.div`
-  color: rgba(0, 0, 0, 0.6);
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 400;
-`;
-
-const Popular = styled.div`
-  color: #000;
-  font-family: "Satoshi";
-  font-size: 16px;
-  font-weight: 500;
-`;
-
-const SellingProduct = styled.div`
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const Title = styled.div`
-  font-family: "Satoshi";
-  font-size: 20px;
-  font-weight: 700;
-`;
-
-const StarRating = styled.div`
-  display: flex;
-  gap: 13px;
-`;
-
-const Rating = styled.div`
-  color: rgba(0, 0, 0, 0.6);
-  font-family: "Satoshi";
-  font-size: 14px;
-  font-weight: 400;
-`;
-const Rate = styled.div`
-  font-family: "Satoshi";
-  font-size: 24px;
-  font-weight: 700;
-`;
-
-const Discount = styled.div`
-  color: rgba(0, 0, 0, 0.4);
-  font-family: "Satoshi";
-  font-size: 24px;
-  font-weight: 700;
-  text-decoration: line-through;
-`;
-
-const DisPer = styled.div`
-  border-radius: 62px;
-  background: rgba(255, 51, 51, 0.1);
-  width: 58px;
-  padding: 7px 14px;
-  color: #f33;
-  font-family: "Satoshi";
-  font-size: 12px;
-  font-weight: 500;
-`;
-
-const DisRate = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const MainDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const MainImg = styled.img`
-  border-radius: 20px;
-  width: 250px;
-  height: 250px;
-`;
-
-const MultipleRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
+const Container = styled(Flex)`
+  max-width: 1240px;
+  margin-top: 70px;
+  padding: 0 10px;
+  gap: 24px;
 `;
